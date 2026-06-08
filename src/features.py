@@ -92,26 +92,54 @@ def add_outlier_flags(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def save_featured(df: pd.DataFrame, path: str = FEATURED_PATH) -> None:
-    """
-    Featured DataFrame ko CSV mein save karo.
-    Swayam (model.py) yahi file use karega LightGBM training ke liye.
-    """
     os.makedirs(os.path.dirname(path), exist_ok=True)
     df.to_csv(path, index=False)
-    print(f"\n[SAVE] ✅ Saved → {path}")
+    print(f"\n[SAVE]  Saved → {path}")
     print(f"[SAVE] Final shape: {df.shape}")
     print(f"[SAVE] All columns: {df.columns.tolist()}")
 
 
-if __name__ == "__main__":
+def add_rpm_per_torque(df: pd.DataFrame) -> pd.DataFrame:
 
+    df = df.copy()
+    df["RPM_per_Torque"] = df["Rotational_speed_rpm"] / (df["Torque_Nm"] + 1e-6)
+    print(f"[FEAT] RPM_per_Torque  -> mean: {df['RPM_per_Torque'].mean():.4f}")
+    return df
+
+
+def add_wear_rate(df: pd.DataFrame) -> pd.DataFrame:
+    df = df.copy()
+    df["Wear_rate"] = df["Tool_wear_min"] / (df["Rotational_speed_rpm"] + 1e-6)
+    print(f"[FEAT] Wear_rate       -> mean: {df['Wear_rate'].mean():.6f}")
+    return df
+
+
+def add_multi_flag(df: pd.DataFrame) -> pd.DataFrame:
+    df = df.copy()
+    flag_cols = [
+        "Torque_Nm_outlier",
+        "Rotational_speed_rpm_outlier",
+        "Tool_wear_min_outlier",
+        "Power_outlier"
+    ]
+    df["Multi_flag"] = df[flag_cols].sum(axis=1)
+    print(f"[FEAT] Multi_flag dist -> {df['Multi_flag'].value_counts().sort_index().to_dict()}")
+    print(f"[FEAT] Critical (3-4)  -> {(df['Multi_flag'] >= 3).sum()} rows")
+    return df
+
+if __name__ == "__main__":
     df = load_clean()
 
+    # Day 2 features
+    df = add_power_feature(df)
+    df = add_temp_diff_feature(df)
+    df = add_wear_bins(df)
+    df = add_interaction_terms(df)
+    df = add_outlier_flags(df)
 
-    df = add_power_feature(df)       # Power = Torque × RPM
-    df = add_temp_diff_feature(df)   # Temp_diff = Process - Air temp
-    df = add_wear_bins(df)           # Tool wear → Low/Medium/High bins
-    df = add_interaction_terms(df)   # Torque×Wear, Power×Temp
-    df = add_outlier_flags(df)       # IQR outlier flags
+    # Day 3 features
+    df = add_rpm_per_torque(df)
+    df = add_wear_rate(df)
+    df = add_multi_flag(df)
 
     save_featured(df)
