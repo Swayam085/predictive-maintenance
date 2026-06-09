@@ -1,0 +1,5 @@
+,Air temperature [K],Air temperature [K],Process temperature [K],Process temperature [K],Rotational speed [rpm],Rotational speed [rpm],Torque [Nm],Torque [Nm],Tool wear [min],Tool wear [min]
+,mean,std,mean,std,mean,std,mean,std,mean,std
+Machine failure,,,,,,,,,,
+0,299.97,1.99,310.0,1.49,1540.26,167.39,39.63,9.47,106.69,62.95
+1,300.89,2.07,310.29,1.36,1496.49,384.94,50.17,16.37,143.78,72.76
