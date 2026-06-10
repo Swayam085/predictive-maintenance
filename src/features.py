@@ -1,3 +1,22 @@
+# src/features.py
+# Author      : Vrushabh (Data Engineer)
+# Branch      : feature/vrushabh-data
+# Description : Feature engineering pipeline — 8 features created
+# Input       : data/processed/clean_data.csv    (10000, 7)
+# Output      : data/processed/featured_data.csv (10000, 19)
+# Week 1 Status:
+#   Day 2 — Power, Temp_diff, Tool_wear_bin, Torque_x_Wear, Power_x_Temp
+#   Day 3 — RPM_per_Torque, Wear_rate, Multi_flag
+# Features Summary:
+#   Power          = Torque x RPM (machine load)
+#   Temp_diff      = Process_temp - Air_temp (overheat indicator)
+#   Tool_wear_bin  = Low / Medium / High bins
+#   Torque_x_Wear  = interaction term (double failure risk)
+#   Power_x_Temp   = interaction term (critical overload)
+#   RPM_per_Torque = efficiency ratio
+#   Wear_rate      = degradation rate
+#   Multi_flag     = outlier score 0 to 4
+
 import pandas as pd
 import numpy as np
 import os
