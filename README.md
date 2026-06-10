@@ -16,7 +16,12 @@ environmental signals.
 - Scikit-learn, Matplotlib
 
 ## Week-wise Progress
-- [x] Week 1: Data ingestion & EDA
+- [x] Week 1: Data ingestion & EDA ✅
+  - Dataset loaded (10,000 rows, 14 columns)
+  - Rolling mean, std, variance calculated
+  - Class imbalance: 96.6% non-failure
+  - LightGBM basic model trained
+  - Feature importance: Tool_wear_min most important
 - [ ] Week 2: Feature engineering
-- [ ] Week 3: ML modeling
+- [ ] Week 3: ML modelingss
 - [ ] Week 4: Noise analysis & deployment
