@@ -24,4 +24,4 @@ Thumbs.db
 .env
 
 # Log files
-*.log
+*.log.ipynb_checkpoints/
