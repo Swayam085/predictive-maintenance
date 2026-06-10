@@ -1,3 +1,13 @@
+# src/data_loader.py
+# Author      : Vrushabh (Data Engineer)
+# Branch      : feature/vrushabh-data
+# Description : Raw CSV load, inspect, clean and save to processed folder
+# Dataset     : AI4I 2020 Predictive Maintenance (ai4i2020.csv)
+# Week 1 Status:
+#   Day 1 — load_raw, inspect, clean, save_processed
+#   Day 4 — make_splits (70/15/15 stratified split)
+#   Day 5 — requirements.txt, Week 1 verified
+
 import pandas as pd
 import os
 
