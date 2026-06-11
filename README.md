@@ -25,3 +25,19 @@ environmental signals.
 - [ ] Week 2: Feature engineering
 - [ ] Week 3: ML modelingss
 - [ ] Week 4: Noise analysis & deployment
+
+
+
+## Data Pipeline (Week 1 — Vrushabh)
+|--------------------------------------------------------|
+|      File         |    Shape    |      Description     |
+|-------------------|-------------|----------------------|
+| clean_data.csv    | (10000, 7)  | Cleaned raw data     |
+| featured_data.csv | (10000, 19) | 8 new features added |
+| X_train.csv       | (7000, 18)  | Training features    |
+| X_val.csv         | (1500, 18)  | Validation features  |
+| X_test.csv        | (1500, 18)  | Test features        |
+| y_train.csv       | (7000, 1)   | Training labels      |
+| y_val.csv         | (1500, 1)   | Validation labels    |
+| y_test.csv        | (1500, 1)   | Test labels          |
+|--------------------------------------------------------|
