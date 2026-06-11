@@ -41,3 +41,21 @@ environmental signals.
 | y_val.csv         | (1500, 1)   | Validation labels    |
 | y_test.csv        | (1500, 1)   | Test labels          |
 |--------------------------------------------------------|
+
+## ML WORK (Week 1 - Swayam)
+
+|-------------------------------------------------------------------------------------|
+| Task                           |   Status    |           Description                |
+|-------------------------------------------------------------------------------------|
+| Dataset Analysis               | Completed   | AI4I dataset explored and validated  |
+| Time-Series Processing         | Completed   | Sensor logs processed                |
+| Rolling Mean                   | Completed   | Operational window mean calculated   |
+| Rolling Standard Deviation     | Completed   | Signal variability measured          |
+| Signal Variance                | Completed   | Variance features generated          |
+| Operational Window Features    | Completed   | Window-based statistics created      |
+| Baseline Feature Engineering   | Completed   | Initial ML features prepared         |
+| Class Imbalance Analysis       | Completed   | Failure distribution analyzed        |
+| Feature Importance Analysis    | Completed   | Key predictive features identified   |
+| SHAP Explainability            | Completed   | Model interpretation completed       |
+| model.py (LightGBM Pipeline)   | Completed   | Training and evaluation module added |
+|-------------------------------------------------------------------------------------|
