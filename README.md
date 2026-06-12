@@ -29,7 +29,6 @@ environmental signals.
 
 
 ## Data Pipeline (Week 1 — Vrushabh)
-|--------------------------------------------------------|
 |      File         |    Shape    |      Description     |
 |-------------------|-------------|----------------------|
 | clean_data.csv    | (10000, 7)  | Cleaned raw data     |
@@ -40,7 +39,6 @@ environmental signals.
 | y_train.csv       | (7000, 1)   | Training labels      |
 | y_val.csv         | (1500, 1)   | Validation labels    |
 | y_test.csv        | (1500, 1)   | Test labels          |
-|--------------------------------------------------------|
 
 
 ## ML WORK (Week 1 - Swayam)

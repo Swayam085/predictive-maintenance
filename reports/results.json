@@ -1,0 +1,7 @@
+{
+    "model": "Test Run",
+    "f1": 0.1311,
+    "precision": 0.0784,
+    "recall": 0.4,
+    "auc": 0.443
+}
