@@ -1,7 +1,17 @@
 {
     "model": "Test Run",
-    "f1": 0.1311,
-    "precision": 0.0784,
-    "recall": 0.4,
-    "auc": 0.443
+    "metrics": {
+        "model": "Test Run",
+        "f1": 0.1311,
+        "precision": 0.0784,
+        "recall": 0.4,
+        "auc": 0.443
+    },
+    "cv_scores": {
+        "cv_folds": 5,
+        "f1_mean": 0.0,
+        "f1_std": 0.0,
+        "auc_mean": 0.505,
+        "auc_std": 0.147
+    }
 }
