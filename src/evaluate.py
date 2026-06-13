@@ -20,7 +20,6 @@ from sklearn.metrics import (
     roc_curve
 )
 
-# ── Output path ──
 FIGURES_PATH = os.path.join("reports", "figures")
 
 
@@ -116,18 +115,82 @@ def save_results(metrics: dict,
     print(f"[SAVE] Results saved → {path}")
 
 
-# ── Quick test ─
+def cross_validate_scores(X, y, model, cv: int = 5) -> dict:
+    
+    from sklearn.model_selection import StratifiedKFold, cross_validate
+    from sklearn.metrics import make_scorer
+
+    print(f"\n[CV] Running {cv}-Fold Stratified Cross Validation...")
+
+    skf = StratifiedKFold(n_splits=cv, shuffle=True, random_state=42)
+
+    scoring = {
+        "f1"  : make_scorer(f1_score),
+        "auc" : make_scorer(roc_auc_score, response_method="predict_proba")
+    }
+
+    results = cross_validate(
+        model, X, y,
+        cv=skf,
+        scoring=scoring,
+        return_train_score=False
+    )
+
+    f1_mean  = results["test_f1"].mean()
+    f1_std   = results["test_f1"].std()
+    auc_mean = results["test_auc"].mean()
+    auc_std  = results["test_auc"].std()
+
+    print(f"[CV] F1  : {f1_mean:.4f} ± {f1_std:.4f}")
+    print(f"[CV] AUC : {auc_mean:.4f} ± {auc_std:.4f}")
+
+    return {
+        "cv_folds"   : cv,
+        "f1_mean"    : round(f1_mean, 4),
+        "f1_std"     : round(f1_std, 4),
+        "auc_mean"   : round(auc_mean, 4),
+        "auc_std"    : round(auc_std, 4)
+    }
+
+
+def save_full_results(metrics: dict,
+                      cv_scores: dict,
+                      path: str = "reports/results.json") -> None:
+
+    import json
+
+    full = {
+        "model"    : metrics.get("model", "Unknown"),
+        "metrics"  : metrics,
+        "cv_scores": cv_scores
+    }
+
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, "w") as f:
+        json.dump(full, f, indent=4)
+    print(f"[SAVE] Full results saved → {path}")
+
+
 if __name__ == "__main__":
-    #
+    from sklearn.linear_model import LogisticRegression
+
     np.random.seed(42)
-    y_true = np.array([0]*100 + [1]*10)   # 10% failure
+    y_true = np.array([0]*100 + [1]*10)
     y_prob = np.random.rand(110)
     y_pred = (y_prob > 0.5).astype(int)
 
+
     metrics = evaluate_model(y_true, y_pred, y_prob,
                              model_name="Test Run")
+
     plot_confusion_matrix(y_true, y_pred, model_name="Test Run")
     plot_roc_curve(y_true, y_prob, model_name="Test Run")
-    save_results(metrics)
 
-    print("\n[INFO] evaluate.py module verified!")
+    X_dummy = np.random.rand(110, 5)
+    model   = LogisticRegression(random_state=42)
+    cv_scores = cross_validate_scores(X_dummy, y_true, model, cv=5)
+
+
+    save_full_results(metrics, cv_scores)
+
+    print("\n[INFO] evaluate.py — all functions verified!")
