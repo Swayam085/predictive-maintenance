@@ -171,26 +171,96 @@ def save_full_results(metrics: dict,
     print(f"[SAVE] Full results saved → {path}")
 
 
+def prepare_shap_background(X_train,
+                             n_samples: int = 100,
+                             path: str = "data/processed/shap_background.csv") -> pd.DataFrame:
+    """
+    SHAP ke liye background dataset prepare karo.
+    TreeExplainer ko representative samples chahiye hote hain.
+    Args:
+        X_train  : training feature matrix
+        n_samples: background samples count (default 100)
+        path     : save path
+    Returns:
+        background DataFrame
+    """
+    # Stratified random sample lo X_train se
+    background = X_train.sample(n=n_samples, random_state=42)
+    background = background.reset_index(drop=True)
+
+    # Save karo
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    background.to_csv(path, index=False)
+
+    print(f"[SHAP] Background dataset prepared → {background.shape}")
+    print(f"[SHAP] Saved → {path}")
+    return background
+
+
+def verify_no_leakage(X_train, X_val, X_test) -> bool:
+   
+    print(f"\n[LEAKAGE CHECK]")
+
+  
+    idx_col = "index" if "index" in X_train.columns else X_train.columns[0]
+
+    train_idx = set(X_train[idx_col])
+    val_idx   = set(X_val[idx_col])
+    test_idx  = set(X_test[idx_col])
+
+    train_val_overlap  = train_idx & val_idx
+    train_test_overlap = train_idx & test_idx
+    val_test_overlap   = val_idx  & test_idx
+
+    print(f"Train ∩ Val  overlap : {len(train_val_overlap)} rows")
+    print(f"Train ∩ Test overlap : {len(train_test_overlap)} rows")
+    print(f"Val   ∩ Test overlap : {len(val_test_overlap)} rows")
+
+    no_leakage = (
+        len(train_val_overlap)  == 0 and
+        len(train_test_overlap) == 0 and
+        len(val_test_overlap)   == 0
+    )
+
+    if no_leakage:
+        print("[LEAKAGE CHECK] No leakage detected — splits are clean!")
+    else:
+        print("[LEAKAGE CHECK] Leakage detected — fix splits!")
+
+    return no_leakage
+
+
 if __name__ == "__main__":
     from sklearn.linear_model import LogisticRegression
 
+  
     np.random.seed(42)
     y_true = np.array([0]*100 + [1]*10)
     y_prob = np.random.rand(110)
     y_pred = (y_prob > 0.5).astype(int)
 
-
     metrics = evaluate_model(y_true, y_pred, y_prob,
                              model_name="Test Run")
-
     plot_confusion_matrix(y_true, y_pred, model_name="Test Run")
     plot_roc_curve(y_true, y_prob, model_name="Test Run")
 
     X_dummy = np.random.rand(110, 5)
     model   = LogisticRegression(random_state=42)
     cv_scores = cross_validate_scores(X_dummy, y_true, model, cv=5)
-
-
     save_full_results(metrics, cv_scores)
 
-    print("\n[INFO] evaluate.py — all functions verified!")
+    print("\n" + "="*50)
+    print("SHAP + LEAKAGE CHECK ON ACTUAL DATA")
+    print("="*50)
+
+    X_train = pd.read_csv("data/processed/X_train.csv")
+    X_val   = pd.read_csv("data/processed/X_val.csv")
+    X_test  = pd.read_csv("data/processed/X_test.csv")
+
+    verify_no_leakage(X_train, X_val, X_test)
+
+    background = prepare_shap_background(X_train, n_samples=100)
+    print(f"\n[INFO] SHAP background columns : {background.columns.tolist()}")
+    print(f"[INFO] SHAP background shape   : {background.shape}")
+
+    print("\n[INFO] evaluate.py — Day 10 all functions verified!")
