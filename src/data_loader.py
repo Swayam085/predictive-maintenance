@@ -140,12 +140,12 @@ def make_splits(df: pd.DataFrame,
 
     os.makedirs(os.path.join("data", "processed"), exist_ok=True)
 
-    X_train.to_csv(os.path.join("data","processed","X_train.csv"), index=False)
-    X_val.to_csv  (os.path.join("data","processed","X_val.csv"),   index=False)
-    X_test.to_csv (os.path.join("data","processed","X_test.csv"),  index=False)
-    y_train.to_csv(os.path.join("data","processed","y_train.csv"), index=False)
-    y_val.to_csv  (os.path.join("data","processed","y_val.csv"),   index=False)
-    y_test.to_csv (os.path.join("data","processed","y_test.csv"),  index=False)
+    X_train.reset_index(drop=False).to_csv(os.path.join("data","processed","X_train.csv"), index=False)
+    X_val.reset_index(drop=False).to_csv  (os.path.join("data","processed","X_val.csv"),   index=False)
+    X_test.reset_index(drop=False).to_csv (os.path.join("data","processed","X_test.csv"),  index=False)
+    y_train.reset_index(drop=False).to_csv(os.path.join("data","processed","y_train.csv"), index=False)
+    y_val.reset_index(drop=False).to_csv  (os.path.join("data","processed","y_val.csv"),   index=False)
+    y_test.reset_index(drop=False).to_csv (os.path.join("data","processed","y_test.csv"),  index=False)
 
     print(f"\n[SAVE] 6 files saved → data/processed/")
     print(f"[SAVE] X_train, X_val, X_test, y_train, y_val, y_test")
