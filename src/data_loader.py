@@ -81,7 +81,7 @@ def clean(df: pd.DataFrame) -> pd.DataFrame:
         df["Type"] = df["Type"].map(type_map)
         print("[CLEAN] 'Type' encoded → L:0, M:1, H:2")
 
-    # 5. Failure sub-types drop 
+  
     failure_subtypes = ["TWF", "HDF", "PWF", "OSF", "RNF"]
     drop_sub = [c for c in failure_subtypes if c in df.columns]
     if drop_sub:
