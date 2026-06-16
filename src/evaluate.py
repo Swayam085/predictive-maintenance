@@ -174,21 +174,11 @@ def save_full_results(metrics: dict,
 def prepare_shap_background(X_train,
                              n_samples: int = 100,
                              path: str = "data/processed/shap_background.csv") -> pd.DataFrame:
-    """
-    SHAP ke liye background dataset prepare karo.
-    TreeExplainer ko representative samples chahiye hote hain.
-    Args:
-        X_train  : training feature matrix
-        n_samples: background samples count (default 100)
-        path     : save path
-    Returns:
-        background DataFrame
-    """
-    # Stratified random sample lo X_train se
+   
+    
     background = X_train.sample(n=n_samples, random_state=42)
     background = background.reset_index(drop=True)
 
-    # Save karo
     os.makedirs(os.path.dirname(path), exist_ok=True)
     background.to_csv(path, index=False)
 
@@ -196,6 +186,66 @@ def prepare_shap_background(X_train,
     print(f"[SHAP] Saved → {path}")
     return background
 
+def plot_precision_recall_curve(y_true, y_prob,
+                                model_name: str = "Model") -> None:
+ 
+    from sklearn.metrics import precision_recall_curve, auc
+
+    precision, recall, thresholds = precision_recall_curve(y_true, y_prob)
+    pr_auc = auc(recall, precision)
+
+
+    f1_scores = 2 * (precision[:-1] * recall[:-1]) / (
+                    precision[:-1] + recall[:-1] + 1e-8)
+    best_idx       = f1_scores.argmax()
+    best_threshold = thresholds[best_idx]
+    best_f1        = f1_scores[best_idx]
+
+    print(f"[PR] Optimal threshold : {best_threshold:.4f}")
+    print(f"[PR] Best F1 at threshold: {best_f1:.4f}")
+    print(f"[PR] PR-AUC            : {pr_auc:.4f}")
+
+    plt.figure(figsize=(6, 5))
+    plt.plot(recall, precision,
+             color="darkorange",
+             lw=2,
+             label=f"PR Curve (AUC = {pr_auc:.4f})")
+    plt.scatter(recall[best_idx], precision[best_idx],
+                color="red", s=100, zorder=5,
+                label=f"Best F1={best_f1:.4f} @ threshold={best_threshold:.2f}")
+    plt.xlabel("Recall")
+    plt.ylabel("Precision")
+    plt.title(f"Precision-Recall Curve — {model_name}")
+    plt.legend(loc="upper right")
+    plt.tight_layout()
+
+    os.makedirs(FIGURES_PATH, exist_ok=True)
+    path = os.path.join(FIGURES_PATH, "pr_curve.png")
+    plt.savefig(path, dpi=150)
+    plt.close()
+    print(f"[PLOT] PR curve saved → {path}")
+
+    return best_threshold
+
+
+def save_classification_report(y_true, y_pred,
+                                path: str = "reports/classification_report.txt") -> None:
+ 
+    from sklearn.metrics import classification_report
+
+    report = classification_report(
+        y_true, y_pred,
+        target_names=["No Failure", "Failure"]
+    )
+
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, "w") as f:
+        f.write(f"Classification Report\n")
+        f.write(f"{'='*40}\n")
+        f.write(report)
+
+    print(f"[SAVE] Classification report saved → {path}")
+    print(report)
 
 def verify_no_leakage(X_train, X_val, X_test) -> bool:
    
@@ -229,11 +279,9 @@ def verify_no_leakage(X_train, X_val, X_test) -> bool:
 
     return no_leakage
 
-
 if __name__ == "__main__":
     from sklearn.linear_model import LogisticRegression
 
-  
     np.random.seed(42)
     y_true = np.array([0]*100 + [1]*10)
     y_prob = np.random.rand(110)
@@ -241,11 +289,19 @@ if __name__ == "__main__":
 
     metrics = evaluate_model(y_true, y_pred, y_prob,
                              model_name="Test Run")
+
     plot_confusion_matrix(y_true, y_pred, model_name="Test Run")
     plot_roc_curve(y_true, y_prob, model_name="Test Run")
 
-    X_dummy = np.random.rand(110, 5)
-    model   = LogisticRegression(random_state=42)
+    
+    best_threshold = plot_precision_recall_curve(
+        y_true, y_prob, model_name="Test Run"
+    )
+
+    save_classification_report(y_true, y_pred)
+    
+    X_dummy   = np.random.rand(110, 5)
+    model     = LogisticRegression(random_state=42)
     cv_scores = cross_validate_scores(X_dummy, y_true, model, cv=5)
     save_full_results(metrics, cv_scores)
 
@@ -258,9 +314,8 @@ if __name__ == "__main__":
     X_test  = pd.read_csv("data/processed/X_test.csv")
 
     verify_no_leakage(X_train, X_val, X_test)
-
     background = prepare_shap_background(X_train, n_samples=100)
-    print(f"\n[INFO] SHAP background columns : {background.columns.tolist()}")
-    print(f"[INFO] SHAP background shape   : {background.shape}")
 
-    print("\n[INFO] evaluate.py — Day 10 all functions verified!")
+    print(f"\n[INFO] Best threshold  : {best_threshold:.4f}")
+    print(f"[INFO] SHAP shape      : {background.shape}")
+    print("\n[INFO] evaluate.py — Day 12 all functions verified!")
