@@ -25,7 +25,7 @@ FIGURES_PATH = os.path.join("reports", "figures")
 
 def evaluate_model(y_true, y_pred, y_prob,
                    model_name: str = "Model") -> dict:
-   
+  
     f1        = f1_score(y_true, y_pred)
     precision = precision_score(y_true, y_pred)
     recall    = recall_score(y_true, y_pred)
@@ -53,7 +53,7 @@ def evaluate_model(y_true, y_pred, y_prob,
 
 def plot_confusion_matrix(y_true, y_pred,
                           model_name: str = "Model") -> None:
-   
+  
     cm = confusion_matrix(y_true, y_pred)
 
     plt.figure(figsize=(6, 5))
@@ -79,7 +79,7 @@ def plot_confusion_matrix(y_true, y_pred,
 
 def plot_roc_curve(y_true, y_prob,
                    model_name: str = "Model") -> None:
-    
+
     fpr, tpr, _ = roc_curve(y_true, y_prob)
     auc          = roc_auc_score(y_true, y_prob)
 
@@ -116,7 +116,7 @@ def save_results(metrics: dict,
 
 
 def cross_validate_scores(X, y, model, cv: int = 5) -> dict:
-    
+   
     from sklearn.model_selection import StratifiedKFold, cross_validate
     from sklearn.metrics import make_scorer
 
@@ -126,7 +126,8 @@ def cross_validate_scores(X, y, model, cv: int = 5) -> dict:
 
     scoring = {
         "f1"  : make_scorer(f1_score),
-        "auc" : make_scorer(roc_auc_score, response_method="predict_proba")
+        "auc" : make_scorer(roc_auc_score,
+                            response_method="predict_proba")
     }
 
     results = cross_validate(
@@ -175,35 +176,37 @@ def prepare_shap_background(X_train,
                              n_samples: int = 100,
                              path: str = "data/processed/shap_background.csv") -> pd.DataFrame:
    
-    
     background = X_train.sample(n=n_samples, random_state=42)
     background = background.reset_index(drop=True)
 
-    os.makedirs(os.path.dirname(path), exist_ok=True)
-    background.to_csv(path, index=False)
 
+    dirname = os.path.dirname(path)
+    if dirname:
+        os.makedirs(dirname, exist_ok=True)
+
+    background.to_csv(path, index=False)
     print(f"[SHAP] Background dataset prepared → {background.shape}")
     print(f"[SHAP] Saved → {path}")
     return background
 
+
 def plot_precision_recall_curve(y_true, y_prob,
-                                model_name: str = "Model") -> None:
+                                model_name: str = "Model"):
  
     from sklearn.metrics import precision_recall_curve, auc
 
     precision, recall, thresholds = precision_recall_curve(y_true, y_prob)
     pr_auc = auc(recall, precision)
 
-
-    f1_scores = 2 * (precision[:-1] * recall[:-1]) / (
-                    precision[:-1] + recall[:-1] + 1e-8)
+    f1_scores      = 2 * (precision[:-1] * recall[:-1]) / (
+                         precision[:-1] + recall[:-1] + 1e-8)
     best_idx       = f1_scores.argmax()
     best_threshold = thresholds[best_idx]
     best_f1        = f1_scores[best_idx]
 
-    print(f"[PR] Optimal threshold : {best_threshold:.4f}")
+    print(f"[PR] Optimal threshold   : {best_threshold:.4f}")
     print(f"[PR] Best F1 at threshold: {best_f1:.4f}")
-    print(f"[PR] PR-AUC            : {pr_auc:.4f}")
+    print(f"[PR] PR-AUC              : {pr_auc:.4f}")
 
     plt.figure(figsize=(6, 5))
     plt.plot(recall, precision,
@@ -238,22 +241,29 @@ def save_classification_report(y_true, y_pred,
         target_names=["No Failure", "Failure"]
     )
 
-    os.makedirs(os.path.dirname(path), exist_ok=True)
+    dirname = os.path.dirname(path)
+    if dirname:
+        os.makedirs(dirname, exist_ok=True)
+
     with open(path, "w") as f:
-        f.write(f"Classification Report\n")
-        f.write(f"{'='*40}\n")
+        f.write("Classification Report\n")
+        f.write("=" * 40 + "\n")
         f.write(report)
 
     print(f"[SAVE] Classification report saved → {path}")
     print(report)
 
+
 def verify_no_leakage(X_train, X_val, X_test) -> bool:
-   
+  
     print(f"\n[LEAKAGE CHECK]")
 
-  
-    idx_col = "index" if "index" in X_train.columns else X_train.columns[0]
+    # index column verify karo
+    if "index" not in X_train.columns:
+        print("[WARNING] 'index' column not found — leakage check may be inaccurate!")
+        return False
 
+    idx_col = "index"
     train_idx = set(X_train[idx_col])
     val_idx   = set(X_val[idx_col])
     test_idx  = set(X_test[idx_col])
@@ -273,38 +283,46 @@ def verify_no_leakage(X_train, X_val, X_test) -> bool:
     )
 
     if no_leakage:
-        print("[LEAKAGE CHECK] No leakage detected — splits are clean!")
+        print("[LEAKAGE CHECK]  No leakage detected — splits are clean!")
     else:
-        print("[LEAKAGE CHECK] Leakage detected — fix splits!")
+        print("[LEAKAGE CHECK]  Leakage detected — fix splits!")
 
     return no_leakage
 
+
+# ── Direct run ─────────────────────────────────────────
 if __name__ == "__main__":
     from sklearn.linear_model import LogisticRegression
 
+    # Dummy data se test karo
     np.random.seed(42)
     y_true = np.array([0]*100 + [1]*10)
     y_prob = np.random.rand(110)
     y_pred = (y_prob > 0.5).astype(int)
 
+    # Step 1: Basic metrics
     metrics = evaluate_model(y_true, y_pred, y_prob,
                              model_name="Test Run")
 
+    # Step 2: Plots
     plot_confusion_matrix(y_true, y_pred, model_name="Test Run")
     plot_roc_curve(y_true, y_prob, model_name="Test Run")
 
-    
+    # Step 3: PR Curve
     best_threshold = plot_precision_recall_curve(
         y_true, y_prob, model_name="Test Run"
     )
 
+    # Step 4: Classification report
     save_classification_report(y_true, y_pred)
-    
+
+    # Step 5: CV scores
     X_dummy   = np.random.rand(110, 5)
     model     = LogisticRegression(random_state=42)
     cv_scores = cross_validate_scores(X_dummy, y_true, model, cv=5)
     save_full_results(metrics, cv_scores)
 
+    # Step 6: Actual splits check
     print("\n" + "="*50)
     print("SHAP + LEAKAGE CHECK ON ACTUAL DATA")
     print("="*50)
@@ -318,4 +336,4 @@ if __name__ == "__main__":
 
     print(f"\n[INFO] Best threshold  : {best_threshold:.4f}")
     print(f"[INFO] SHAP shape      : {background.shape}")
-    print("\n[INFO] evaluate.py — Day 12 all functions verified!")
+    print("\n[INFO] evaluate.py — all functions verified!")

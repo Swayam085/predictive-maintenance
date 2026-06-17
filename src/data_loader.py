@@ -7,24 +7,26 @@
 #   Day 1 — load_raw, inspect, clean, save_processed
 #   Day 4 — make_splits (70/15/15 stratified split)
 #   Day 5 — requirements.txt, Week 1 verified
+# Week 2 Status:
+#   Day 10 — leakage fix (reset_index added before CSV save)
+#   Day 13 — docstrings + PEP8 fixes applied
 
 import pandas as pd
 import os
 
-# ─ Paths
 RAW_PATH       = os.path.join("data", "raw", "ai4i2020.csv")
 PROCESSED_PATH = os.path.join("data", "processed", "clean_data.csv")
 
 
 def load_raw(path: str = RAW_PATH) -> pd.DataFrame:
+
     df = pd.read_csv(path)
     print(f"[INFO] Loaded: {df.shape[0]} rows × {df.shape[1]} columns")
     return df
 
 
 def inspect(df: pd.DataFrame) -> None:
-  
-
+    
     print("\n── COLUMNS ──────────────────────────────────────────")
     print(df.columns.tolist())
 
@@ -36,7 +38,7 @@ def inspect(df: pd.DataFrame) -> None:
     if missing.any():
         print(missing[missing > 0])
     else:
-        print(" There is no missing value!")
+        print("There is no missing value!")
 
     print("\n── DUPLICATE ROWS ───────────────────────────────────")
     dupes = df.duplicated().sum()
@@ -54,7 +56,6 @@ def inspect(df: pd.DataFrame) -> None:
 
 def clean(df: pd.DataFrame) -> pd.DataFrame:
 
-    # 1. Column names clean
     df = df.copy()
     df.columns = (
         df.columns
@@ -65,45 +66,42 @@ def clean(df: pd.DataFrame) -> pd.DataFrame:
     )
     print("\n[CLEAN] Renamed columns:", df.columns.tolist())
 
-    # 2. Duplicates remove
     before = len(df)
     df = df.drop_duplicates()
     print(f"[CLEAN] Duplicate rows removed: {before - len(df)}")
 
-    # 3. Identifier columns drop
     drop_ids = [c for c in ["UDI", "Product_ID"] if c in df.columns]
     df = df.drop(columns=drop_ids)
     print(f"[CLEAN] Dropped identifier columns: {drop_ids}")
 
-    # 4. Type encode (ordinal: L < M < H)
     type_map = {"L": 0, "M": 1, "H": 2}
     if "Type" in df.columns:
         df["Type"] = df["Type"].map(type_map)
         print("[CLEAN] 'Type' encoded → L:0, M:1, H:2")
 
-  
     failure_subtypes = ["TWF", "HDF", "PWF", "OSF", "RNF"]
     drop_sub = [c for c in failure_subtypes if c in df.columns]
     if drop_sub:
         df = df.drop(columns=drop_sub)
         print(f"[CLEAN] Dropped failure sub-types: {drop_sub}")
 
-    print(f"\n[CLEAN]  Final shape: {df.shape}")
+    print(f"\n[CLEAN] Final shape: {df.shape}")
     return df
 
 
 def save_processed(df: pd.DataFrame, path: str = PROCESSED_PATH) -> None:
-   
+ 
     os.makedirs(os.path.dirname(path), exist_ok=True)
     df.to_csv(path, index=False)
-    print(f"[SAVE]  Saved → {path}")
+    print(f"[SAVE] Saved → {path}")
+
 
 def make_splits(df: pd.DataFrame,
                 target_col: str = "Machine_failure",
                 test_size: float = 0.15,
                 val_size: float = 0.15,
                 random_state: int = 42) -> dict:
-   
+
     from sklearn.model_selection import train_test_split
 
     X = df.drop(columns=[target_col])
@@ -137,7 +135,6 @@ def make_splits(df: pd.DataFrame,
         print(f"[SPLIT] {name} → {len(X_s):5d} rows | "
               f"failure rate: {y_s.mean()*100:.2f}%")
 
-
     os.makedirs(os.path.join("data", "processed"), exist_ok=True)
 
     X_train.reset_index(drop=False).to_csv(os.path.join("data","processed","X_train.csv"), index=False)
@@ -147,7 +144,7 @@ def make_splits(df: pd.DataFrame,
     y_val.reset_index(drop=False).to_csv  (os.path.join("data","processed","y_val.csv"),   index=False)
     y_test.reset_index(drop=False).to_csv (os.path.join("data","processed","y_test.csv"),  index=False)
 
-    print(f"\n[SAVE] 6 files saved → data/processed/")
+    print(f"\n[SAVE]  6 files saved → data/processed/")
     print(f"[SAVE] X_train, X_val, X_test, y_train, y_val, y_test")
 
     return {
@@ -156,15 +153,13 @@ def make_splits(df: pd.DataFrame,
     }
 
 
-
 if __name__ == "__main__":
-    # Original pipeline (Day 1)
+
     df_raw   = load_raw()
     inspect(df_raw)
     df_clean = clean(df_raw)
     save_processed(df_clean)
 
-    # Day 4 — featured data on split 
     print("\n" + "="*50)
     print("SPLIT PIPELINE")
     print("="*50)
