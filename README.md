@@ -8,47 +8,6 @@
 | Vrushabh | Data Engineer | feature/vrushabh-data |
 | Keshav | Analysis + Visualization | feature/keshava-viz |
 
-## 📁 Project Structure
-predictive-maintenance/
-
-├── data/
-
-│   ├── raw/                  ← ai4i2020.csv
-
-│   └── processed/            ← clean, featured, train/test splits
-
-├── notebooks/
-
-│   ├── 01_eda.ipynb
-
-│   ├── 02_features.ipynb
-
-│   ├── 03_model.ipynb
-
-│   └── keshava_viz_day4.ipynb ← SHAP + Model Evaluation Viz
-
-├── src/
-
-│   ├── data_loader.py
-
-│   ├── features.py
-
-│   ├── model.py
-
-│   └── evaluate.py
-
-├── reports/
-
-│   ├── figures/               ← 23 visualization PNGs
-
-│   ├── final_eda_report.html  ← Complete EDA Report
-
-│   ├── interactice_toolwear_box.html
-
-│   └── eda_summary.csv
-
-└── requirements.txt
-
 ## 🛠️ Tech Stack
 - **Language:** Python 3.x
 - **ML Model:** LightGBM
@@ -86,3 +45,46 @@ jupyter notebook notebooks/01_eda.ipynb
 jupyter notebook notebooks/keshava_viz_day4.ipynb
 jupyter notebook notebooks/03_model.ipynb
 ```
+=
+## Week-wise Progress
+- [x] Week 1: Data ingestion & EDA ✅
+  - Dataset loaded (10,000 rows, 14 columns)
+  - Rolling mean, std, variance calculated
+  - Class imbalance: 96.6% non-failure
+  - LightGBM basic model trained
+  - Feature importance: Tool_wear_min most important
+- [ ] Week 2: Feature engineering
+- [ ] Week 3: ML modelingss
+- [ ] Week 4: Noise analysis & deployment
+
+
+
+## Data Pipeline (Week 1 — Vrushabh)
+|      File         |    Shape    |      Description     |
+|-------------------|-------------|----------------------|
+| clean_data.csv    | (10000, 7)  | Cleaned raw data     |
+| featured_data.csv | (10000, 19) | 8 new features added |
+| X_train.csv       | (7000, 18)  | Training features    |
+| X_val.csv         | (1500, 18)  | Validation features  |
+| X_test.csv        | (1500, 18)  | Test features        |
+| y_train.csv       | (7000, 1)   | Training labels      |
+| y_val.csv         | (1500, 1)   | Validation labels    |
+| y_test.csv        | (1500, 1)   | Test labels          |
+
+
+## ML WORK (Week 1 - Swayam)
+
+| Task | Status | Description |
+|------|--------|-------------|
+| Dataset Analysis | ✅ | AI4I dataset explored and validated |
+| Time-Series Processing | ✅ | Sensor logs processed |
+| Rolling Mean | ✅ | Operational window mean calculated |
+| Rolling Std Deviation | ✅ | Signal variability measured |
+| Signal Variance | ✅ | Variance features generated |
+| Operational Window | ✅ | Window-based statistics created |
+| Baseline Feature Engineering | ✅ | Initial ML features prepared |
+| Class Imbalance Analysis | ✅ | Failure distribution analyzed |
+| Feature Importance | ✅ | Key predictive features identified |
+| SHAP Analysis | ✅ | Model interpretation completed |
+| model.py (LightGBM) | ✅ | Training and evaluation module added |
+
