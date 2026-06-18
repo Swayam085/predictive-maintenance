@@ -125,6 +125,27 @@ jupyter notebook notebooks/03_model.ipynb
 | X_val.csv         | (1500, 18)  | Validation data     |
 | X_test.csv        | (1500, 18)  | Test data           |
 
+
+## Evaluation Module (Week 2 — Vrushabh)
+
+### Functions (9 total):
+|         Function              |            Description         |         Output            |
+|-------------------------------|--------------------------------|---------------------------|
+| evaluate_model()              | F1, Precision, Recall, ROC-AUC | dict                      |
+| plot_confusion_matrix()       | Heatmap plot                   | confusion_matrix.png      |
+| plot_roc_curve()              | ROC curve plot                 | roc_curve.png             |
+| plot_precision_recall_curve() | PR curve, optimal threshold    | pr_curve.png              |
+| save_classification_report()  | Full report text               | classification_report.txt |
+| cross_validate_scores()       | 5-fold stratified CV           | dict                      |
+| save_full_results()           | Metrics + CV JSON              | results.json              |
+| prepare_shap_background()     | SHAP background samples        | shap_background.csv       |
+| verify_no_leakage()           | Index overlap check            | bool                      |
+  
+### Verified:
+- No data leakage: 0 overlap rows
+- SHAP background: (100, 19) ready for Swayam
+- Optimal threshold: 0.2288 for LightGBM calibration
+- Code review: docstrings + PEP8 + error handling applied
 ---
 
 ## 🎯 Impact
