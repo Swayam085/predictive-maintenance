@@ -110,8 +110,8 @@ jupyter notebook notebooks/03_model.ipynb
 
 * [x] Week 1: Data ingestion & EDA ✅
 * [x] Week 2: Feature Engineering ✅
-* [x] Week 3: Model Building & Evaluation ✅
-* [x] Week 4: Explainability & Final Report ✅
+* [ ] Week 3: Model Building & Evaluation 
+* [ ] Week 4: Explainability & Final Report 
 
 ---
 
