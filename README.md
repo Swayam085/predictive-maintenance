@@ -167,3 +167,17 @@ jupyter notebook notebooks/03_model.ipynb
 ## ⭐ Conclusion
 
 A complete **industry-level predictive maintenance pipeline** combining data engineering, machine learning, and explainability.
+
+
+## Week 2 – Contextual Data Fusion (swayam-ml)
+
+- Integrated contextual features with IoT sensor dataset
+- Performed feature fusion and comparative analysis
+- Conducted 5-Fold Cross Validation on fused dataset
+- Baseline CV F1: 0.8195
+- External Features CV F1: 0.8715
+- Fused Dataset CV F1: 0.8696
+- Cross Validation Std Dev: 0.0140
+- Achieved project target (Macro F1 > 0.85)
+
+See `notebooks/03_model.ipynb` for detailed analysis.
