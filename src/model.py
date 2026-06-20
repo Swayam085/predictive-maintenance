@@ -28,11 +28,12 @@ Y_TEST_PATH   = os.path.join("data", "processed", "y_test.csv")
 
 # LightGBM Params
 LGBM_PARAMS = {
-    "n_estimators"  : 200,
+    "n_estimators"  : 500,
     "learning_rate" : 0.05,
     "max_depth"     : 6,
-    "num_leaves"    : 31,
+    "num_leaves"    : 63,
     "class_weight"  : "balanced",
+    "min_child_samples": 10,
     "random_state"  : 42,
     "n_jobs"        : -1,
     "verbose"       : -1,
