@@ -88,5 +88,95 @@
             "Torque_Nm": 65.0,
             "Tool_wear_min": 220
         }
+    },
+    {
+        "timestamp": "2026-06-22 21:36:05",
+        "alert_level": "YELLOW",
+        "pred_label": 1,
+        "failure_prob": 0.3812,
+        "message": "[YELLOW] Warning! Monitor machine closely. Failure prob: 38.12%",
+        "sensor_input": {
+            "Type": 1,
+            "Air_temperature_K": 300.0,
+            "Process_temperature_K": 310.5,
+            "Rotational_speed_rpm": 1500,
+            "Torque_Nm": 45.0,
+            "Tool_wear_min": 50
+        }
+    },
+    {
+        "timestamp": "2026-06-22 21:36:05",
+        "alert_level": "GREEN",
+        "pred_label": 0,
+        "failure_prob": 0.2975,
+        "message": "[GREEN]  Machine operating normally. Failure prob: 29.75%",
+        "sensor_input": {
+            "Type": 0,
+            "Air_temperature_K": 298.0,
+            "Process_temperature_K": 308.0,
+            "Rotational_speed_rpm": 1600,
+            "Torque_Nm": 38.0,
+            "Tool_wear_min": 30
+        }
+    },
+    {
+        "timestamp": "2026-06-22 21:36:06",
+        "alert_level": "YELLOW",
+        "pred_label": 1,
+        "failure_prob": 0.585,
+        "message": "[YELLOW] Warning! Monitor machine closely. Failure prob: 58.50%",
+        "sensor_input": {
+            "Type": 1,
+            "Air_temperature_K": 301.0,
+            "Process_temperature_K": 311.0,
+            "Rotational_speed_rpm": 1450,
+            "Torque_Nm": 52.0,
+            "Tool_wear_min": 130
+        }
+    },
+    {
+        "timestamp": "2026-06-22 21:36:06",
+        "alert_level": "RED",
+        "pred_label": 1,
+        "failure_prob": 0.7875,
+        "message": "[RED]    CRITICAL! Immediate maintenance required. Failure prob: 78.75%",
+        "sensor_input": {
+            "Type": 2,
+            "Air_temperature_K": 303.0,
+            "Process_temperature_K": 313.0,
+            "Rotational_speed_rpm": 1250,
+            "Torque_Nm": 62.0,
+            "Tool_wear_min": 200
+        }
+    },
+    {
+        "timestamp": "2026-06-22 21:36:06",
+        "alert_level": "RED",
+        "pred_label": 1,
+        "failure_prob": 0.885,
+        "message": "[RED]    CRITICAL! Immediate maintenance required. Failure prob: 88.50%",
+        "sensor_input": {
+            "Type": 2,
+            "Air_temperature_K": 304.0,
+            "Process_temperature_K": 313.5,
+            "Rotational_speed_rpm": 1180,
+            "Torque_Nm": 68.0,
+            "Tool_wear_min": 230
+        }
+    },
+    {
+        "timestamp": "2026-06-22 21:36:06",
+        "alert_level": "GREEN",
+        "pred_label": 0,
+        "failure_prob": 0.29,
+        "message": "[GREEN]  Machine operating normally. Failure prob: 29.00%",
+        "sensor_input": {
+            "Type": 0,
+            "Air_temperature_K": 299.0,
+            "Process_temperature_K": 309.0,
+            "Rotational_speed_rpm": 1550,
+            "Torque_Nm": 40.0,
+            "Tool_wear_min": 20
+        }
     }
 ]
