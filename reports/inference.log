@@ -7,3 +7,20 @@
 2026-06-22 21:36:06 | CRITICAL | [RED]    CRITICAL! Immediate maintenance required. Failure prob: 78.75%
 2026-06-22 21:36:06 | CRITICAL | [RED]    CRITICAL! Immediate maintenance required. Failure prob: 88.50%
 2026-06-22 21:36:06 | INFO | [GREEN]  Machine operating normally. Failure prob: 29.00%
+2026-06-23 08:08:14 | WARNING | [YELLOW] Warning! Monitor machine closely. Failure prob: 38.12%
+2026-06-23 08:08:14 | INFO | [GREEN]  Machine operating normally. Failure prob: 29.75%
+2026-06-23 08:08:14 | WARNING | [YELLOW] Warning! Monitor machine closely. Failure prob: 58.50%
+2026-06-23 08:08:14 | CRITICAL | [RED]    CRITICAL! Immediate maintenance required. Failure prob: 78.75%
+2026-06-23 08:08:14 | CRITICAL | [RED]    CRITICAL! Immediate maintenance required. Failure prob: 88.50%
+2026-06-23 08:08:14 | INFO | [GREEN]  Machine operating normally. Failure prob: 29.00%
+2026-06-23 08:52:55 | WARNING | [YELLOW] Warning! Monitor machine closely. Failure prob: 38.12%
+2026-06-23 08:52:55 | INFO | [GREEN]  Machine operating normally. Failure prob: 26.75%
+2026-06-23 08:52:55 | INFO | [GREEN]  Machine operating normally. Failure prob: 29.54%
+2026-06-23 08:52:55 | WARNING | [YELLOW] Warning! Monitor machine closely. Failure prob: 31.87%
+2026-06-23 08:52:55 | INFO | [GREEN]  Machine operating normally. Failure prob: 26.09%
+2026-06-23 08:52:55 | INFO | [GREEN]  Machine operating normally. Failure prob: 26.80%
+2026-06-23 08:52:55 | INFO | [GREEN]  Machine operating normally. Failure prob: 28.39%
+2026-06-23 08:52:55 | INFO | [GREEN]  Machine operating normally. Failure prob: 29.30%
+2026-06-23 08:52:55 | INFO | [GREEN]  Machine operating normally. Failure prob: 28.32%
+2026-06-23 08:52:55 | INFO | [GREEN]  Machine operating normally. Failure prob: 21.48%
+2026-06-23 08:52:55 | INFO | [GREEN]  Machine operating normally. Failure prob: 21.70%

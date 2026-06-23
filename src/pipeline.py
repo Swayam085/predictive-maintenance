@@ -82,6 +82,86 @@ def save_pipeline_log(results: list,
         json.dump(log, f, indent=4)
     print(f"\n[LOG] Pipeline log saved → {path}")
 
+def run_pipeline_from_csv(csv_path: str,
+                           n_samples: int = 10) -> list:
+    """
+    CSV file se sensor readings load karo aur batch pipeline run karo.
+    Real data pe end-to-end test karne ke liye.
+    Args:
+        csv_path  : path to CSV file (featured_data.csv)
+        n_samples : number of rows to process (default 10)
+    Returns:
+        list of result dicts
+    """
+    print(f"\n[CSV] Loading data from → {csv_path}")
+
+    df = pd.read_csv(csv_path)
+    print(f"[CSV] Loaded: {df.shape[0]} rows × {df.shape[1]} columns")
+
+    # Raw sensor columns jo inference.py ko chahiye
+    raw_cols = [
+        "Type", "Air_temperature_K", "Process_temperature_K",
+        "Rotational_speed_rpm", "Torque_Nm", "Tool_wear_min"
+    ]
+
+    # Missing columns check karo
+    missing = [c for c in raw_cols if c not in df.columns]
+    if missing:
+        print(f"[ERROR] Missing columns: {missing}")
+        return []
+
+    # Sample rows lo
+    sample_df = df[raw_cols].head(n_samples)
+    print(f"[CSV] Processing {n_samples} rows...")
+
+    # Har row ko dict mein convert karo
+    batch_inputs = sample_df.to_dict(orient="records")
+
+    # Batch pipeline run karo
+    results = run_batch_pipeline(batch_inputs)
+    return results
+
+
+def compare_alerts_with_actual(csv_path: str,
+                                results: list,
+                                n_samples: int = 10) -> dict:
+
+    df = pd.read_csv(csv_path)
+
+    if "Machine_failure" not in df.columns:
+        print("[ERROR] Machine_failure column not found!")
+        return {}
+
+    actual = df["Machine_failure"].head(n_samples).tolist()
+
+    print("\n" + "="*55)
+    print("ALERT vs ACTUAL COMPARISON")
+    print("="*55)
+    print(f"{'Row':<5} {'Actual':<10} {'Alert':<10} {'Prob':<8} {'Match'}")
+    print("-"*55)
+
+    correct = 0
+    for i, (res, act) in enumerate(zip(results, actual)):
+        alert     = res["alert_level"]
+        prob      = res["failure_prob"]
+        # RED/YELLOW = predicted failure, GREEN = predicted no failure
+        pred_fail = 1 if alert in ["RED", "YELLOW"] else 0
+        match     = "YES" if pred_fail == act else "NO"
+        if match == "YES":
+            correct += 1
+        print(f"{i+1:<5} {act:<10} {alert:<10} {prob:<8.4f} {match}")
+
+    accuracy = correct / n_samples * 100
+    print("-"*55)
+    print(f"Correct: {correct}/{n_samples} ({accuracy:.1f}%)")
+    print("="*55)
+
+    return {
+        "total"   : n_samples,
+        "correct" : correct,
+        "accuracy": round(accuracy, 2)
+    }
+
 
 def print_pipeline_summary(results: list) -> None:
   
@@ -104,8 +184,10 @@ def print_pipeline_summary(results: list) -> None:
 if __name__ == "__main__":
 
     print("="*55)
-    print("DAY 17 — INTEGRATION TEST")
+    print("DAY 18 — CSV INPUT + COMPARISON TEST")
     print("="*55)
+
+    CSV_PATH = os.path.join("data", "processed", "featured_data.csv")
 
     # ── Test 1: Single reading ──────────────────────────
     print("\n── Test 1: Single Sensor Reading ────────────")
@@ -118,56 +200,22 @@ if __name__ == "__main__":
         "Tool_wear_min"         : 50
     }
     result = run_pipeline_without_onnx(single_input)
-    print(f"\nResult:")
-    print(f"  Shape    : {result['preprocessed_shape']}")
-    print(f"  Prob     : {result['failure_prob']}")
-    print(f"  Alert    : {result['alert_level']}")
-    print(f"  Message  : {result['message']}")
+    print(f"  Shape  : {result['preprocessed_shape']}")
+    print(f"  Prob   : {result['failure_prob']}")
+    print(f"  Alert  : {result['alert_level']}")
 
-    # ── Test 2: Batch pipeline ──────────────────────────
-    print("\n── Test 2: Batch Pipeline (5 readings) ──────")
-    batch_inputs = [
-        # Normal operation
-        {
-            "Type": 0, "Air_temperature_K": 298.0,
-            "Process_temperature_K": 308.0,
-            "Rotational_speed_rpm": 1600,
-            "Torque_Nm": 38.0, "Tool_wear_min": 30
-        },
-        # Warning zone
-        {
-            "Type": 1, "Air_temperature_K": 301.0,
-            "Process_temperature_K": 311.0,
-            "Rotational_speed_rpm": 1450,
-            "Torque_Nm": 52.0, "Tool_wear_min": 130
-        },
-        # High risk
-        {
-            "Type": 2, "Air_temperature_K": 303.0,
-            "Process_temperature_K": 313.0,
-            "Rotational_speed_rpm": 1250,
-            "Torque_Nm": 62.0, "Tool_wear_min": 200
-        },
-        # Critical
-        {
-            "Type": 2, "Air_temperature_K": 304.0,
-            "Process_temperature_K": 313.5,
-            "Rotational_speed_rpm": 1180,
-            "Torque_Nm": 68.0, "Tool_wear_min": 230
-        },
-        # Normal again
-        {
-            "Type": 0, "Air_temperature_K": 299.0,
-            "Process_temperature_K": 309.0,
-            "Rotational_speed_rpm": 1550,
-            "Torque_Nm": 40.0, "Tool_wear_min": 20
-        }
-    ]
+    # ── Test 2: CSV pipeline ────────────────────────────
+    print("\n── Test 2: CSV Pipeline (10 rows) ───────────")
+    csv_results = run_pipeline_from_csv(CSV_PATH, n_samples=10)
+    print_pipeline_summary(csv_results)
+    save_pipeline_log(csv_results)
 
-    results = run_batch_pipeline(batch_inputs)
-    print_pipeline_summary(results)
-    save_pipeline_log(results)
+    # ── Test 3: Compare with actual ─────────────────────
+    print("\n── Test 3: Alert vs Actual Comparison ───────")
+    stats = compare_alerts_with_actual(CSV_PATH, csv_results, n_samples=10)
 
-    # ── Test 3: Alert summary ───────────────────────────
-    print("\n── Test 3: Overall Alert Summary ────────────")
+    # ── Test 4: Alert summary ───────────────────────────
+    print("\n── Test 4: Overall Alert Summary ────────────")
     get_alert_summary()
+
+    print("\n[INFO] pipeline.py — Day 18 CSV test complete!")
