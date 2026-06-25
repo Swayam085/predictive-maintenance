@@ -146,6 +146,34 @@ jupyter notebook notebooks/03_model.ipynb
 - SHAP background: (100, 19) ready for Swayam
 - Optimal threshold: 0.2288 for LightGBM calibration
 - Code review: docstrings + PEP8 + error handling applied
+
+
+## Inference Pipeline (Week 3 — Vrushabh)
+
+### Files added:
+|         File        |                    Description                           |
+|---------------------|----------------------------------------------------------|
+| src/inference.py    | Raw sensor input → feature engineering → ONNX prediction |
+| src/alert_system.py | GREEN / YELLOW / RED alert system with logging           |
+| src/pipeline.py     | End-to-end batch pipeline with CSV support               |
+| tests/              | 27 pytest unit tests — all passing                       |
+
+### Alert Thresholds:
+|  Level | Probability |        Action         |
+|--------|-------------|-----------------------|
+| GREEN  | < 0.30      | Normal operation      |
+| YELLOW | 0.30 – 0.60 | Monitor closely       |
+| RED    | >= 0.60     | Immediate maintenance |
+
+### Verified:
+- Preprocessing: raw dict → (1, 18) float32 array
+- Batch pipeline: 10 CSV rows, 90% accuracy
+- Alert logging: inference.log + alert_logs.json
+- Unit tests: 27/27 PASS in 27.11s
+
+### Week-wise Progress update:
+- [x] Week 3: Inference + Alert pipeline complete
+
 ---
 
 ## 🎯 Impact
