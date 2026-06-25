@@ -181,3 +181,26 @@ A complete **industry-level predictive maintenance pipeline** combining data eng
 - Achieved project target (Macro F1 > 0.85)
 
 See `notebooks/03_model.ipynb` for detailed analysis.
+
+
+## Week 3 — Imbalanced Classification & LightGBM Modeling
+
+### ML Track (Swayam Arya)
+
+#### Key Results
+| Metric | Value |
+|--------|-------|
+| Macro F1 (CV with SMOTE) | 0.8819 |
+| Tuned Threshold | 0.3988 |
+| Tuned Macro F1 | 0.8753 |
+| ROC-AUC | 0.9644 |
+| Noise Robust upto | 0.10 |
+| Top Feature (SHAP) | Torque_Nm |
+
+#### Work Done
+- SMOTE implemented inside CV folds — no data leakage
+- LightGBM hyperparameters tuned — n_estimators 500, num_leaves 63
+- Threshold tuned from 0.50 to 0.3988 via PR curve
+- Noise sensitivity analysis — model robust at all noise levels
+- SHAP summary, bar and waterfall plots generated
+- Confusion matrix and ROC-AUC updated with tuned model
