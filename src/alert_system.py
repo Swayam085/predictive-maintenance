@@ -2,10 +2,13 @@
 # Author      : Vrushabh (Data Engineer)
 # Branch      : feature/vrushabh-data
 # Description : 3-tier alert system with logging
-#               GREEN / YELLOW / RED alerts based on failure probability
+#               GREEN (< 0.30) / YELLOW (0.30-0.60) / RED (>= 0.60)
 # Week 3 Status:
-#   Day 16 — alert_system, logger, alert history
-# Used by     : inference.py + Dashboard (Week 4)
+#   Day 16 — setup_logger, get_alert_level, get_alert_message
+#             create_alert, log_alert, save_alert_history
+#             process_alert, get_alert_summary
+#   Day 19 — 27/27 pytest tests passing
+# Used by     : pipeline.py + Dashboard (Week 4)
 
 import os
 import json
