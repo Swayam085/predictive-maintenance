@@ -2,10 +2,14 @@
 # Author      : Vrushabh (Data Engineer)
 # Branch      : feature/vrushabh-data
 # Description : End-to-end integration pipeline
-#               Raw sensor input → preprocess → alert (without ONNX)
+#               Raw input / CSV → preprocess → alert → log
 # Week 3 Status:
-#   Day 17 — integration test, batch pipeline, pipeline summary
-# Used by     : Dashboard (Week 4) + Swayam (ONNX integration)
+#   Day 17 — run_pipeline_without_onnx, run_batch_pipeline
+#             save_pipeline_log, print_pipeline_summary
+#   Day 18 — run_pipeline_from_csv, compare_alerts_with_actual
+#             CSV test: 90% accuracy on 10 rows
+#   Day 19 — 27/27 pytest tests passing
+# Used by     : Dashboard (Week 4)
 
 import pandas as pd
 import numpy as np

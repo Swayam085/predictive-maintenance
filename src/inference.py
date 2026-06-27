@@ -2,10 +2,14 @@
 # Author      : Vrushabh (Data Engineer)
 # Branch      : feature/vrushabh-data
 # Description : ONNX inference pipeline
-#               Raw sensor input → preprocessing → ONNX model → failure probability
+#               Raw sensor input → preprocessing → prediction → alert
 # Week 3 Status:
-#   Day 15 — inference pipeline, preprocess, predict functions
-# Used by     : Swayam (ONNX export) + Dashboard (Week 4)
+#   Day 15 — preprocess_input, load_feature_cols, load_onnx_model
+#             predict, get_alert_level, run_inference
+#   Day 17 — integration tested with pipeline.py
+#   Day 18 — CSV batch processing verified (90% accuracy)
+#   Day 19 — 27/27 pytest tests passing
+# Used by     : pipeline.py + Dashboard (Week 4)
 
 import pandas as pd
 import numpy as np
