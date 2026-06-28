@@ -1,0 +1,196 @@
+{
+    "timestamp": "2026-06-26 22:03:56",
+    "total_runs": 10,
+    "results": [
+        {
+            "sensor_input": {
+                "Type": 1,
+                "Air_temperature_K": 298.1,
+                "Process_temperature_K": 308.6,
+                "Rotational_speed_rpm": 1551,
+                "Torque_Nm": 42.8,
+                "Tool_wear_min": 0
+            },
+            "preprocessed_shape": [
+                1,
+                18
+            ],
+            "failure_prob": 0.2675,
+            "pred_label": 0,
+            "alert_level": "GREEN",
+            "message": "[GREEN]  Machine operating normally. Failure prob: 26.75%",
+            "timestamp": "2026-06-26 22:03:56"
+        },
+        {
+            "sensor_input": {
+                "Type": 0,
+                "Air_temperature_K": 298.2,
+                "Process_temperature_K": 308.7,
+                "Rotational_speed_rpm": 1408,
+                "Torque_Nm": 46.3,
+                "Tool_wear_min": 3
+            },
+            "preprocessed_shape": [
+                1,
+                18
+            ],
+            "failure_prob": 0.2954,
+            "pred_label": 0,
+            "alert_level": "GREEN",
+            "message": "[GREEN]  Machine operating normally. Failure prob: 29.54%",
+            "timestamp": "2026-06-26 22:03:56"
+        },
+        {
+            "sensor_input": {
+                "Type": 0,
+                "Air_temperature_K": 298.1,
+                "Process_temperature_K": 308.5,
+                "Rotational_speed_rpm": 1498,
+                "Torque_Nm": 49.4,
+                "Tool_wear_min": 5
+            },
+            "preprocessed_shape": [
+                1,
+                18
+            ],
+            "failure_prob": 0.3187,
+            "pred_label": 1,
+            "alert_level": "YELLOW",
+            "message": "[YELLOW] Warning! Monitor machine closely. Failure prob: 31.87%",
+            "timestamp": "2026-06-26 22:03:56"
+        },
+        {
+            "sensor_input": {
+                "Type": 0,
+                "Air_temperature_K": 298.2,
+                "Process_temperature_K": 308.6,
+                "Rotational_speed_rpm": 1433,
+                "Torque_Nm": 39.5,
+                "Tool_wear_min": 7
+            },
+            "preprocessed_shape": [
+                1,
+                18
+            ],
+            "failure_prob": 0.2609,
+            "pred_label": 0,
+            "alert_level": "GREEN",
+            "message": "[GREEN]  Machine operating normally. Failure prob: 26.09%",
+            "timestamp": "2026-06-26 22:03:56"
+        },
+        {
+            "sensor_input": {
+                "Type": 0,
+                "Air_temperature_K": 298.2,
+                "Process_temperature_K": 308.7,
+                "Rotational_speed_rpm": 1408,
+                "Torque_Nm": 40.0,
+                "Tool_wear_min": 9
+            },
+            "preprocessed_shape": [
+                1,
+                18
+            ],
+            "failure_prob": 0.268,
+            "pred_label": 0,
+            "alert_level": "GREEN",
+            "message": "[GREEN]  Machine operating normally. Failure prob: 26.80%",
+            "timestamp": "2026-06-26 22:03:56"
+        },
+        {
+            "sensor_input": {
+                "Type": 1,
+                "Air_temperature_K": 298.1,
+                "Process_temperature_K": 308.6,
+                "Rotational_speed_rpm": 1425,
+                "Torque_Nm": 41.9,
+                "Tool_wear_min": 11
+            },
+            "preprocessed_shape": [
+                1,
+                18
+            ],
+            "failure_prob": 0.2839,
+            "pred_label": 0,
+            "alert_level": "GREEN",
+            "message": "[GREEN]  Machine operating normally. Failure prob: 28.39%",
+            "timestamp": "2026-06-26 22:03:56"
+        },
+        {
+            "sensor_input": {
+                "Type": 0,
+                "Air_temperature_K": 298.1,
+                "Process_temperature_K": 308.6,
+                "Rotational_speed_rpm": 1558,
+                "Torque_Nm": 42.4,
+                "Tool_wear_min": 14
+            },
+            "preprocessed_shape": [
+                1,
+                18
+            ],
+            "failure_prob": 0.293,
+            "pred_label": 0,
+            "alert_level": "GREEN",
+            "message": "[GREEN]  Machine operating normally. Failure prob: 29.30%",
+            "timestamp": "2026-06-26 22:03:56"
+        },
+        {
+            "sensor_input": {
+                "Type": 0,
+                "Air_temperature_K": 298.1,
+                "Process_temperature_K": 308.6,
+                "Rotational_speed_rpm": 1527,
+                "Torque_Nm": 40.2,
+                "Tool_wear_min": 16
+            },
+            "preprocessed_shape": [
+                1,
+                18
+            ],
+            "failure_prob": 0.2833,
+            "pred_label": 0,
+            "alert_level": "GREEN",
+            "message": "[GREEN]  Machine operating normally. Failure prob: 28.32%",
+            "timestamp": "2026-06-26 22:03:56"
+        },
+        {
+            "sensor_input": {
+                "Type": 1,
+                "Air_temperature_K": 298.3,
+                "Process_temperature_K": 308.7,
+                "Rotational_speed_rpm": 1667,
+                "Torque_Nm": 28.6,
+                "Tool_wear_min": 18
+            },
+            "preprocessed_shape": [
+                1,
+                18
+            ],
+            "failure_prob": 0.2148,
+            "pred_label": 0,
+            "alert_level": "GREEN",
+            "message": "[GREEN]  Machine operating normally. Failure prob: 21.48%",
+            "timestamp": "2026-06-26 22:03:56"
+        },
+        {
+            "sensor_input": {
+                "Type": 1,
+                "Air_temperature_K": 298.5,
+                "Process_temperature_K": 309.0,
+                "Rotational_speed_rpm": 1741,
+                "Torque_Nm": 28.0,
+                "Tool_wear_min": 21
+            },
+            "preprocessed_shape": [
+                1,
+                18
+            ],
+            "failure_prob": 0.217,
+            "pred_label": 0,
+            "alert_level": "GREEN",
+            "message": "[GREEN]  Machine operating normally. Failure prob: 21.70%",
+            "timestamp": "2026-06-26 22:03:56"
+        }
+    ]
+}

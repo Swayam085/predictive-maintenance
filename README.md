@@ -146,6 +146,34 @@ jupyter notebook notebooks/03_model.ipynb
 - SHAP background: (100, 19) ready for Swayam
 - Optimal threshold: 0.2288 for LightGBM calibration
 - Code review: docstrings + PEP8 + error handling applied
+
+
+## Inference Pipeline (Week 3 — Vrushabh)
+
+### Files added:
+|         File        |                    Description                           |
+|---------------------|----------------------------------------------------------|
+| src/inference.py    | Raw sensor input → feature engineering → ONNX prediction |
+| src/alert_system.py | GREEN / YELLOW / RED alert system with logging           |
+| src/pipeline.py     | End-to-end batch pipeline with CSV support               |
+| tests/              | 27 pytest unit tests — all passing                       |
+
+### Alert Thresholds:
+|  Level | Probability |        Action         |
+|--------|-------------|-----------------------|
+| GREEN  | < 0.30      | Normal operation      |
+| YELLOW | 0.30 – 0.60 | Monitor closely       |
+| RED    | >= 0.60     | Immediate maintenance |
+
+### Verified:
+- Preprocessing: raw dict → (1, 18) float32 array
+- Batch pipeline: 10 CSV rows, 90% accuracy
+- Alert logging: inference.log + alert_logs.json
+- Unit tests: 27/27 PASS in 27.11s
+
+### Week-wise Progress update:
+- [x] Week 3: Inference + Alert pipeline complete
+
 ---
 
 ## 🎯 Impact
@@ -181,3 +209,26 @@ A complete **industry-level predictive maintenance pipeline** combining data eng
 - Achieved project target (Macro F1 > 0.85)
 
 See `notebooks/03_model.ipynb` for detailed analysis.
+
+
+## Week 3 — Imbalanced Classification & LightGBM Modeling
+
+### ML Track (Swayam Arya)
+
+#### Key Results
+| Metric | Value |
+|--------|-------|
+| Macro F1 (CV with SMOTE) | 0.8819 |
+| Tuned Threshold | 0.3988 |
+| Tuned Macro F1 | 0.8753 |
+| ROC-AUC | 0.9644 |
+| Noise Robust upto | 0.10 |
+| Top Feature (SHAP) | Torque_Nm |
+
+#### Work Done
+- SMOTE implemented inside CV folds — no data leakage
+- LightGBM hyperparameters tuned — n_estimators 500, num_leaves 63
+- Threshold tuned from 0.50 to 0.3988 via PR curve
+- Noise sensitivity analysis — model robust at all noise levels
+- SHAP summary, bar and waterfall plots generated
+- Confusion matrix and ROC-AUC updated with tuned model
