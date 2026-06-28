@@ -58,3 +58,37 @@
 2026-06-27 20:44:06 | WARNING | [YELLOW] Warning! Monitor machine closely. Failure prob: 34.62%
 2026-06-27 20:44:06 | WARNING | [YELLOW] Warning! Monitor machine closely. Failure prob: 35.91%
 2026-06-27 20:44:06 | CRITICAL | [RED]    CRITICAL! Immediate maintenance required. Failure prob: 80.76%
+2026-06-28 15:20:15 | WARNING | [YELLOW] Warning! Monitor machine closely. Failure prob: 30.27%
+2026-06-28 15:20:15 | WARNING | [YELLOW] Warning! Monitor machine closely. Failure prob: 33.22%
+2026-06-28 15:20:16 | CRITICAL | [RED]    CRITICAL! Immediate maintenance required. Failure prob: 74.97%
+2026-06-28 15:20:17 | WARNING | [YELLOW] Warning! Monitor machine closely. Failure prob: 55.12%
+2026-06-28 15:20:17 | CRITICAL | [RED]    CRITICAL! Immediate maintenance required. Failure prob: 75.34%
+2026-06-28 15:20:18 | WARNING | [YELLOW] Warning! Monitor machine closely. Failure prob: 33.94%
+2026-06-28 15:20:18 | WARNING | [YELLOW] Warning! Monitor machine closely. Failure prob: 55.63%
+2026-06-28 15:20:19 | WARNING | [YELLOW] Warning! Monitor machine closely. Failure prob: 46.42%
+2026-06-28 15:20:19 | WARNING | [YELLOW] Warning! Monitor machine closely. Failure prob: 33.45%
+2026-06-28 15:20:20 | WARNING | [YELLOW] Warning! Monitor machine closely. Failure prob: 52.57%
+2026-06-28 15:20:20 | INFO | [GREEN]  Machine operating normally. Failure prob: 23.40%
+2026-06-28 15:20:21 | WARNING | [YELLOW] Warning! Monitor machine closely. Failure prob: 34.49%
+2026-06-28 15:23:25 | WARNING | [YELLOW] Warning! Monitor machine closely. Failure prob: 47.70%
+2026-06-28 15:23:25 | WARNING | [YELLOW] Warning! Monitor machine closely. Failure prob: 55.85%
+2026-06-28 15:23:26 | WARNING | [YELLOW] Warning! Monitor machine closely. Failure prob: 36.57%
+2026-06-28 15:23:26 | INFO | [GREEN]  Machine operating normally. Failure prob: 29.89%
+2026-06-28 15:23:27 | INFO | [GREEN]  Machine operating normally. Failure prob: 25.64%
+2026-06-28 15:23:28 | WARNING | [YELLOW] Warning! Monitor machine closely. Failure prob: 34.83%
+2026-06-28 15:23:28 | CRITICAL | [RED]    CRITICAL! Immediate maintenance required. Failure prob: 69.34%
+2026-06-28 15:23:29 | CRITICAL | [RED]    CRITICAL! Immediate maintenance required. Failure prob: 62.11%
+2026-06-28 15:23:29 | WARNING | [YELLOW] Warning! Monitor machine closely. Failure prob: 44.76%
+2026-06-28 15:23:30 | WARNING | [YELLOW] Warning! Monitor machine closely. Failure prob: 32.49%
+2026-06-28 15:23:30 | CRITICAL | [RED]    CRITICAL! Immediate maintenance required. Failure prob: 67.18%
+2026-06-28 15:23:31 | WARNING | [YELLOW] Warning! Monitor machine closely. Failure prob: 58.19%
+2026-06-28 15:33:33 | WARNING | [YELLOW] Warning! Monitor machine closely. Failure prob: 30.27%
+2026-06-28 15:33:33 | WARNING | [YELLOW] Warning! Monitor machine closely. Failure prob: 33.22%
+2026-06-28 15:33:34 | CRITICAL | [RED]    CRITICAL! Immediate maintenance required. Failure prob: 74.97%
+2026-06-28 15:33:34 | WARNING | [YELLOW] Warning! Monitor machine closely. Failure prob: 55.12%
+2026-06-28 15:33:35 | CRITICAL | [RED]    CRITICAL! Immediate maintenance required. Failure prob: 75.34%
+2026-06-28 15:33:35 | WARNING | [YELLOW] Warning! Monitor machine closely. Failure prob: 33.94%
+2026-06-28 15:33:36 | WARNING | [YELLOW] Warning! Monitor machine closely. Failure prob: 55.63%
+2026-06-28 15:33:36 | WARNING | [YELLOW] Warning! Monitor machine closely. Failure prob: 46.42%
+2026-06-28 15:33:37 | WARNING | [YELLOW] Warning! Monitor machine closely. Failure prob: 33.45%
+2026-06-28 15:33:37 | WARNING | [YELLOW] Warning! Monitor machine closely. Failure prob: 52.57%
