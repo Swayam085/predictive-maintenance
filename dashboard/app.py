@@ -1,9 +1,10 @@
 # dashboard/app.py
-# Author      : Vrushabh (Data Engineer)
-# Branch      : feature/vrushabh-data
+# Author      : Vrushabh (Data Engineer) + Swayam Arya (ML)
+# Branch      : feature/vrushabh-data + feature/swayam-ml
 # Description : Streamlit dashboard — live predictive maintenance monitor
 # Week 4 Status:
 #   Day 23 — main dashboard, live feed, alert display
+#   Day 24 — ML Analysis tabs added (Swayam)
 # Run        : streamlit run dashboard/app.py
 
 import streamlit as st
@@ -27,7 +28,7 @@ st.set_page_config(
 
 # ── Title ──────────────────────────────────────────────
 st.title("Predictive Maintenance Dashboard")
-st.caption("IoT Edge AI ")
+st.caption("IoT Edge AI")
 st.divider()
 
 # ── Load data ──────────────────────────────────────────
@@ -63,23 +64,18 @@ if run_button:
 
     st.subheader("Live Sensor Stream")
 
-    # Alert banner placeholder
     alert_banner = st.empty()
 
-    # Metrics row
     m1, m2, m3 = st.columns(3)
     green_count  = m1.empty()
     yellow_count = m2.empty()
     red_count    = m3.empty()
 
-    # Live table
     st.subheader("Reading History")
     table_placeholder = st.empty()
 
-    # Progress bar
     progress = st.progress(0)
 
-    # Results store karo
     results  = []
     g_cnt = y_cnt = r_cnt = 0
 
@@ -88,7 +84,6 @@ if run_button:
         sensor_input = {k: v for k, v in reading.items()
                         if k not in ["idx", "actual_failure"]}
 
-        # Probability simulate karo
         wear_ratio   = reading["Tool_wear_min"] / 250.0
         torque_ratio = reading["Torque_Nm"] / 80.0
         temp_ratio   = (reading["Process_temperature_K"] -
@@ -105,31 +100,21 @@ if run_button:
 
         level = alert["alert_level"]
 
-        # Count update karo
         if level == "GREEN":  g_cnt += 1
         elif level == "YELLOW": y_cnt += 1
         else: r_cnt += 1
 
-        # Alert banner
         if level == "GREEN":
-            alert_banner.success(
-                f"Reading {i+1}: {alert['message']}"
-            )
+            alert_banner.success(f"Reading {i+1}: {alert['message']}")
         elif level == "YELLOW":
-            alert_banner.warning(
-                f"Reading {i+1}: {alert['message']}"
-            )
+            alert_banner.warning(f"Reading {i+1}: {alert['message']}")
         else:
-            alert_banner.error(
-                f"Reading {i+1}: {alert['message']}"
-            )
+            alert_banner.error(f"Reading {i+1}: {alert['message']}")
 
-        # Metrics update
         green_count.metric("GREEN (safe)", g_cnt)
         yellow_count.metric("YELLOW (warn)", y_cnt)
         red_count.metric("RED (critical)", r_cnt)
 
-        # Table update
         results.append({
             "Reading" : i + 1,
             "Type"    : reading["Type"],
@@ -147,12 +132,9 @@ if run_button:
             hide_index=True
         )
 
-        # Progress bar
         progress.progress((i + 1) / n_readings)
-
         time.sleep(delay)
 
-    # ── Final summary ───────────────────────────────────
     st.divider()
     st.subheader("Session Summary")
 
@@ -172,7 +154,6 @@ if run_button:
     st.success("Simulation complete!")
 
 else:
-    # ── Default view ────────────────────────────────────
     st.subheader("Sensor Data Preview")
     st.dataframe(
         df.head(20),
@@ -189,3 +170,87 @@ else:
     c3.metric("Failure rate",     "3.39%")
 
     st.info("Click 'Run Live Simulation' in sidebar to start!")
+
+# ── ML Analysis Tabs ────────────────────────────────────
+st.divider()
+st.subheader("ML Model Analysis — Swayam Arya")
+
+tab1, tab2, tab3, tab4 = st.tabs([
+    "SHAP Analysis",
+    "Precision-Recall Curve",
+    "Noise Analysis",
+    "Model Metrics"
+])
+
+# Tab 1 — SHAP
+with tab1:
+    st.markdown("### SHAP Feature Importance")
+    shap_summary = "reports/figures/shap_summary.png"
+    shap_bar     = "reports/figures/shap_bar.png"
+    shap_wfall   = "reports/figures/shap_waterfall.png"
+
+    if os.path.exists(shap_summary):
+        col1, col2 = st.columns(2)
+        with col1:
+            st.image(shap_summary, caption="SHAP Summary Plot", use_container_width=True)
+        with col2:
+            st.image(shap_bar, caption="SHAP Feature Importance", use_container_width=True)
+        st.image(shap_wfall, caption="SHAP Waterfall — Single Failure Explanation", use_container_width=True)
+    else:
+        st.warning("SHAP plots not found!")
+
+# Tab 2 — PR Curve
+with tab2:
+    st.markdown("### Precision-Recall Curve")
+    pr_curve = "reports/figures/pr_curve.png"
+
+    if os.path.exists(pr_curve):
+        st.image(pr_curve, caption="PR Curve — Best Threshold = 0.40", use_container_width=True)
+        col1, col2, col3 = st.columns(3)
+        col1.metric("Default Threshold", "0.50")
+        col2.metric("Tuned Threshold", "0.3988")
+        col3.metric("F1 Improvement", "0.8639 → 0.8753")
+    else:
+        st.warning("PR curve not found!")
+
+# Tab 3 — Noise Analysis
+with tab3:
+    st.markdown("### Noise Sensitivity Analysis")
+    noise_plot = "reports/figures/week4_analysis.png"
+
+    if os.path.exists(noise_plot):
+        st.image(noise_plot, caption="Model Robustness — Noise vs Macro F1", use_container_width=True)
+
+    noise_data = {
+        "Noise Level": [0.01, 0.05, 0.10, 0.20],
+        "Mean Macro F1": [0.8637, 0.8593, 0.8572, 0.8485],
+        "Status": ["✅ Above Target", "✅ Above Target", "✅ Above Target", "✅ Above Target"]
+    }
+    st.dataframe(pd.DataFrame(noise_data), use_container_width=True, hide_index=True)
+
+# Tab 4 — Model Metrics
+with tab4:
+    st.markdown("### Final Model Metrics")
+
+    col1, col2, col3, col4 = st.columns(4)
+    col1.metric("Macro F1 (CV)", "0.8819", "+0.0624 vs baseline")
+    col2.metric("ROC-AUC", "0.9644")
+    col3.metric("Tuned Threshold", "0.3988")
+    col4.metric("Noise Robust upto", "0.20")
+
+    st.divider()
+
+    metrics_data = {
+        "Metric": [
+            "Macro F1 — Baseline",
+            "Macro F1 — With External",
+            "Macro F1 — CV + SMOTE",
+            "Tuned Macro F1",
+            "ROC-AUC"
+        ],
+        "Value": ["0.8195", "0.8715", "0.8819", "0.8753", "0.9644"],
+        "Week": ["Week 2", "Week 2", "Week 3", "Week 3", "Week 3"]
+    }
+    st.dataframe(pd.DataFrame(metrics_data), use_container_width=True, hide_index=True)
+
+    st.markdown("**Top Features (SHAP):** Torque_Nm > Rotational_speed_rpm > Air_temperature_K")
