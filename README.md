@@ -110,7 +110,7 @@ jupyter notebook notebooks/03_model.ipynb
 
 * [x] Week 1: Data ingestion & EDA ✅
 * [x] Week 2: Feature Engineering ✅
-* [ ] Week 3: Model Building & Evaluation 
+* [x] Week 3: Model Building & Evaluation ✅
 * [ ] Week 4: Explainability & Final Report 
 
 ---
@@ -232,3 +232,40 @@ See `notebooks/03_model.ipynb` for detailed analysis.
 - Noise sensitivity analysis — model robust at all noise levels
 - SHAP summary, bar and waterfall plots generated
 - Confusion matrix and ROC-AUC updated with tuned model
+
+
+## Week 4 — Explainability & Dashboard Integration
+
+### ML Track (Swayam Arya)
+
+#### Completed (Day 1 – Day 3)
+
+| Module                              | Status |
+| ----------------------------------- | ------ |
+| Noise Sensitivity Analysis          | ✅      |
+| SHAP Summary, Bar & Waterfall Plots | ✅      |
+| Precision–Recall Curve              | ✅      |
+| Streamlit Dashboard Integration     | ✅      |
+| Dashboard Merge Conflict Resolution | ✅      |
+| Figure Overlap Fix                  | ✅      |
+| Dashboard Testing                   | ✅      |
+
+#### Dashboard Features
+
+* Live IoT sensor simulation
+* SHAP Explainability tab
+* Precision–Recall Curve visualization
+* Noise Analysis dashboard
+* Final Model Metrics dashboard
+* Interactive machine health monitoring
+
+#### Current Performance
+
+| Metric           | Value           |
+| ---------------- | --------------- |
+| Macro F1 (CV)    | **0.8819**      |
+| Tuned Macro F1   | **0.8753**      |
+| ROC-AUC          | **0.9644**      |
+| Tuned Threshold  | **0.3988**      |
+| Noise Robustness | **20% Noise**   |
+| Dashboard Status | ✅ Fully Working |
