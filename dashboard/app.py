@@ -128,7 +128,7 @@ if run_button:
 
         table_placeholder.dataframe(
             pd.DataFrame(results),
-            use_container_width=True,
+            width=700,
             hide_index=True
         )
 
@@ -157,7 +157,7 @@ else:
     st.subheader("Sensor Data Preview")
     st.dataframe(
         df.head(20),
-        use_container_width=True,
+        width=700,
         hide_index=True
     )
 
@@ -192,10 +192,10 @@ with tab1:
     if os.path.exists(shap_summary):
         col1, col2 = st.columns(2)
         with col1:
-            st.image(shap_summary, caption="SHAP Summary Plot", use_container_width=True)
+            st.image(shap_summary, caption="SHAP Summary Plot", width=700)
         with col2:
-            st.image(shap_bar, caption="SHAP Feature Importance", use_container_width=True)
-        st.image(shap_wfall, caption="SHAP Waterfall — Single Failure Explanation", use_container_width=True)
+            st.image(shap_bar, caption="SHAP Feature Importance", width=700)
+        st.image(shap_wfall, caption="SHAP Waterfall — Single Failure Explanation", width=700)
     else:
         st.warning("SHAP plots not found!")
 
@@ -205,7 +205,7 @@ with tab2:
     pr_curve = "reports/figures/pr_curve.png"
 
     if os.path.exists(pr_curve):
-        st.image(pr_curve, caption="PR Curve — Best Threshold = 0.40", use_container_width=True)
+        st.image(pr_curve, caption="PR Curve — Best Threshold = 0.40", width=700)
         col1, col2, col3 = st.columns(3)
         col1.metric("Default Threshold", "0.50")
         col2.metric("Tuned Threshold", "0.3988")
@@ -219,14 +219,14 @@ with tab3:
     noise_plot = "reports/figures/week4_analysis.png"
 
     if os.path.exists(noise_plot):
-        st.image(noise_plot, caption="Model Robustness — Noise vs Macro F1", use_container_width=True)
+        st.image(noise_plot, caption="Model Robustness — Noise vs Macro F1", width=700)
 
     noise_data = {
         "Noise Level": [0.01, 0.05, 0.10, 0.20],
         "Mean Macro F1": [0.8637, 0.8593, 0.8572, 0.8485],
         "Status": ["✅ Above Target", "✅ Above Target", "✅ Above Target", "✅ Above Target"]
     }
-    st.dataframe(pd.DataFrame(noise_data), use_container_width=True, hide_index=True)
+    st.dataframe(pd.DataFrame(noise_data), width=700, hide_index=True)
 
 # Tab 4 — Model Metrics
 with tab4:
@@ -251,6 +251,6 @@ with tab4:
         "Value": ["0.8195", "0.8715", "0.8819", "0.8753", "0.9644"],
         "Week": ["Week 2", "Week 2", "Week 3", "Week 3", "Week 3"]
     }
-    st.dataframe(pd.DataFrame(metrics_data), use_container_width=True, hide_index=True)
+    st.dataframe(pd.DataFrame(metrics_data), width=700, hide_index=True)
 
     st.markdown("**Top Features (SHAP):** Torque_Nm > Rotational_speed_rpm > Air_temperature_K")
