@@ -1,73 +1,256 @@
+# dashboard/app.py
+# Author      : Vrushabh (Data Engineer) + Swayam Arya (ML)
+# Branch      : feature/vrushabh-data + feature/swayam-ml
+# Description : Streamlit dashboard — live predictive maintenance monitor
+# Week 4 Status:
+#   Day 23 — main dashboard, live feed, alert display
+#   Day 24 — ML Analysis tabs added (Swayam)
+# Run        : streamlit run dashboard/app.py
+
 import streamlit as st
+import pandas as pd
+import numpy as np
+import time
+import os
+import sys
 
-# ---------------- PAGE CONFIG ----------------
-st.set_page_config(page_title="Predictive Maintenance", layout="wide")
+sys.path.append("src")
+from data_feed import load_sensor_data, get_single_reading, simulate_stream
+from inference import preprocess_input, load_feature_cols
+from alert_system import process_alert, get_alert_summary
 
-# ---------------- TITLE ----------------
-st.title("🔧 Predictive Maintenance Dashboard")
-st.markdown("### Machine Failure Analysis & Insights")
+# ── Page config ────────────────────────────────────────
+st.set_page_config(
+    page_title = "Predictive Maintenance",
+    page_icon  = "🔧",
+    layout     = "wide"
+)
 
-# ---------------- STYLE (MAKE IMAGES SAME SIZE) ----------------
-st.markdown("""
-<style>
-img {
-    height: 300px !important;
-    object-fit: contain;
-    border-radius: 10px;
-}
-.block-container {
-    padding-top: 1rem;
-}
-</style>
-""", unsafe_allow_html=True)
+# ── Title ──────────────────────────────────────────────
+st.title("Predictive Maintenance Dashboard")
+st.caption("IoT Edge AI")
+st.divider()
 
-# ---------------- BASE URL ----------------
-BASE_URL = "https://raw.githubusercontent.com/Swayam085/predictive-maintenance/main/reports/figures/"
+# ── Load data ──────────────────────────────────────────
+@st.cache_data
+def load_data():
+    return load_sensor_data()
 
-# ---------------- IMAGE FUNCTION ----------------
-def show_image(filename, title):
-    url = BASE_URL + filename
+df = load_data()
 
-    st.markdown(f"""
-    <div style="background-color:#111; padding:10px; border-radius:10px; margin-bottom:10px;">
-        <h5 style="text-align:center; color:white;">{title}</h5>
-    </div>
-    """, unsafe_allow_html=True)
+# ── Sidebar ────────────────────────────────────────────
+st.sidebar.header("Controls")
+n_readings  = st.sidebar.slider("Number of readings", 5, 50, 10)
+delay       = st.sidebar.slider("Delay between readings (sec)", 0.0, 2.0, 0.5)
+random_seed = st.sidebar.number_input("Random seed", value=42)
+run_button  = st.sidebar.button("Run Live Simulation", type="primary")
+st.sidebar.divider()
+st.sidebar.caption(f"Dataset: {len(df):,} sensor readings")
+st.sidebar.caption("Model: Simulated probability")
 
-    st.image(url, use_container_width=True)
+# ── Metric cards (top) ─────────────────────────────────
+col1, col2, col3, col4 = st.columns(4)
+col1.metric("Total Readings", f"{len(df):,}")
+col2.metric("Failure Rate",   "3.39%")
+col3.metric("Features",       "18")
+col4.metric("Tests Passing",  "27/27")
 
-# ---------------- DASHBOARD ----------------
+st.divider()
 
-# 📊 Overview
-st.subheader("📊 Overview")
-col1, col2 = st.columns(2)
+# ── Live simulation ────────────────────────────────────
+if run_button:
+    np.random.seed(int(random_seed))
+    feature_cols = load_feature_cols()
 
-with col1:
-    show_image("01_class_distribution.png", "Failure Distribution")
+    st.subheader("Live Sensor Stream")
 
-with col2:
-    show_image("10_feature_importance.png", "Feature Importance")
+    alert_banner = st.empty()
 
-# 🔍 Key Insights
-st.subheader("🔍 Key Insights")
-col3, col4 = st.columns(2)
+    m1, m2, m3 = st.columns(3)
+    green_count  = m1.empty()
+    yellow_count = m2.empty()
+    red_count    = m3.empty()
 
-with col3:
-    show_image("07_speed_vs_torque.png", "Speed vs Torque")
+    st.subheader("Reading History")
+    table_placeholder = st.empty()
 
-with col4:
-    show_image("04_features_by_failure.png", "Features by Failure")
+    progress = st.progress(0)
 
-# ⚙️ Additional Analysis
-st.subheader("⚙️ Additional Analysis")
-col5, col6 = st.columns(2)
+    results  = []
+    g_cnt = y_cnt = r_cnt = 0
 
-with col5:
-    show_image("05_failure_types.png", "Failure Types")
+    for i in range(n_readings):
+        reading      = get_single_reading(df)
+        sensor_input = {k: v for k, v in reading.items()
+                        if k not in ["idx", "actual_failure"]}
 
-with col6:
-    show_image("03_correlation_heatmap.png", "Correlation Heatmap")
+        wear_ratio   = reading["Tool_wear_min"] / 250.0
+        torque_ratio = reading["Torque_Nm"] / 80.0
+        temp_ratio   = (reading["Process_temperature_K"] -
+                        reading["Air_temperature_K"]) / 15.0
+        prob = min(0.99, (wear_ratio * 0.5 +
+                          torque_ratio * 0.3 +
+                          temp_ratio * 0.2))
 
-# ---------------- FOOTER ----------------
-st.markdown("---")
-st.success("✅ Dashboard Fully Working & Styled")
+        pred_label = 1 if prob >= 0.30 else 0
+        alert      = process_alert(
+            sensor_input, prob, pred_label,
+            save_history=False
+        )
+
+        level = alert["alert_level"]
+
+        if level == "GREEN":  g_cnt += 1
+        elif level == "YELLOW": y_cnt += 1
+        else: r_cnt += 1
+
+        if level == "GREEN":
+            alert_banner.success(f"Reading {i+1}: {alert['message']}")
+        elif level == "YELLOW":
+            alert_banner.warning(f"Reading {i+1}: {alert['message']}")
+        else:
+            alert_banner.error(f"Reading {i+1}: {alert['message']}")
+
+        green_count.metric("GREEN (safe)", g_cnt)
+        yellow_count.metric("YELLOW (warn)", y_cnt)
+        red_count.metric("RED (critical)", r_cnt)
+
+        results.append({
+            "Reading" : i + 1,
+            "Type"    : reading["Type"],
+            "Torque"  : f"{reading['Torque_Nm']:.1f} Nm",
+            "Tool wear": f"{reading['Tool_wear_min']} min",
+            "Temp diff": f"{reading['Process_temperature_K'] - reading['Air_temperature_K']:.1f} K",
+            "Prob"    : f"{prob:.4f}",
+            "Alert"   : level,
+            "Actual"  : reading["actual_failure"]
+        })
+
+        table_placeholder.dataframe(
+            pd.DataFrame(results),
+            width=700,
+            hide_index=True
+        )
+
+        progress.progress((i + 1) / n_readings)
+        time.sleep(delay)
+
+    st.divider()
+    st.subheader("Session Summary")
+
+    total    = len(results)
+    accuracy = sum(
+        1 for r in results
+        if (r["Alert"] in ["YELLOW", "RED"]) == bool(r["Actual"])
+    ) / total * 100
+
+    s1, s2, s3, s4 = st.columns(4)
+    s1.metric("Total", total)
+    s2.metric("GREEN", g_cnt)
+    s3.metric("YELLOW", y_cnt)
+    s4.metric("RED", r_cnt)
+
+    st.info(f"Session accuracy: {accuracy:.1f}%")
+    st.success("Simulation complete!")
+
+else:
+    st.subheader("Sensor Data Preview")
+    st.dataframe(
+        df.head(20),
+        width=700,
+        hide_index=True
+    )
+
+    st.divider()
+    st.subheader("Dataset Statistics")
+
+    c1, c2, c3 = st.columns(3)
+    c1.metric("Failure cases",    f"{df['Machine_failure'].sum()}")
+    c2.metric("Normal cases",     f"{(df['Machine_failure']==0).sum()}")
+    c3.metric("Failure rate",     "3.39%")
+
+    st.info("Click 'Run Live Simulation' in sidebar to start!")
+
+# ── ML Analysis Tabs ────────────────────────────────────
+st.divider()
+st.subheader("ML Model Analysis — Swayam Arya")
+
+tab1, tab2, tab3, tab4 = st.tabs([
+    "SHAP Analysis",
+    "Precision-Recall Curve",
+    "Noise Analysis",
+    "Model Metrics"
+])
+
+# Tab 1 — SHAP
+with tab1:
+    st.markdown("### SHAP Feature Importance")
+    shap_summary = "reports/figures/shap_summary.png"
+    shap_bar     = "reports/figures/shap_bar.png"
+    shap_wfall   = "reports/figures/shap_waterfall.png"
+
+    if os.path.exists(shap_summary):
+        col1, col2 = st.columns(2)
+        with col1:
+            st.image(shap_summary, caption="SHAP Summary Plot", width=700)
+        with col2:
+            st.image(shap_bar, caption="SHAP Feature Importance", width=700)
+        st.image(shap_wfall, caption="SHAP Waterfall — Single Failure Explanation", width=700)
+    else:
+        st.warning("SHAP plots not found!")
+
+# Tab 2 — PR Curve
+with tab2:
+    st.markdown("### Precision-Recall Curve")
+    pr_curve = "reports/figures/pr_curve.png"
+
+    if os.path.exists(pr_curve):
+        st.image(pr_curve, caption="PR Curve — Best Threshold = 0.40", width=700)
+        col1, col2, col3 = st.columns(3)
+        col1.metric("Default Threshold", "0.50")
+        col2.metric("Tuned Threshold", "0.3988")
+        col3.metric("F1 Improvement", "0.8639 → 0.8753")
+    else:
+        st.warning("PR curve not found!")
+
+# Tab 3 — Noise Analysis
+with tab3:
+    st.markdown("### Noise Sensitivity Analysis")
+    noise_plot = "reports/figures/week4_analysis.png"
+
+    if os.path.exists(noise_plot):
+        st.image(noise_plot, caption="Model Robustness — Noise vs Macro F1", width=700)
+
+    noise_data = {
+        "Noise Level": [0.01, 0.05, 0.10, 0.20],
+        "Mean Macro F1": [0.8637, 0.8593, 0.8572, 0.8485],
+        "Status": ["✅ Above Target", "✅ Above Target", "✅ Above Target", "✅ Above Target"]
+    }
+    st.dataframe(pd.DataFrame(noise_data), width=700, hide_index=True)
+
+# Tab 4 — Model Metrics
+with tab4:
+    st.markdown("### Final Model Metrics")
+
+    col1, col2, col3, col4 = st.columns(4)
+    col1.metric("Macro F1 (CV)", "0.8819", "+0.0624 vs baseline")
+    col2.metric("ROC-AUC", "0.9644")
+    col3.metric("Tuned Threshold", "0.3988")
+    col4.metric("Noise Robust upto", "0.20")
+
+    st.divider()
+
+    metrics_data = {
+        "Metric": [
+            "Macro F1 — Baseline",
+            "Macro F1 — With External",
+            "Macro F1 — CV + SMOTE",
+            "Tuned Macro F1",
+            "ROC-AUC"
+        ],
+        "Value": ["0.8195", "0.8715", "0.8819", "0.8753", "0.9644"],
+        "Week": ["Week 2", "Week 2", "Week 3", "Week 3", "Week 3"]
+    }
+    st.dataframe(pd.DataFrame(metrics_data), width=700, hide_index=True)
+
+    st.markdown("**Top Features (SHAP):** Torque_Nm > Rotational_speed_rpm > Air_temperature_K")
