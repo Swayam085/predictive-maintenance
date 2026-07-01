@@ -5,7 +5,7 @@
 # Week 4 Status:
 #   Day 23 — main dashboard, live feed, alert display
 #   Day 24 — ML Analysis tabs added (Swayam)
-# Run        : streamlit run dashboard/app.py
+#   Day 25 — Real ONNX model connected (Swayam)
 
 import streamlit as st
 import pandas as pd
@@ -13,11 +13,59 @@ import numpy as np
 import time
 import os
 import sys
+import json
 
 sys.path.append("src")
 from data_feed import load_sensor_data, get_single_reading, simulate_stream
 from inference import preprocess_input, load_feature_cols
 from alert_system import process_alert, get_alert_summary
+
+# ── ONNX Model Load (ek baar) ──────────────────────────
+import onnxruntime as ort
+
+FINAL_MODEL_PATH = "models/final_model.onnx"
+EXT_DEFAULTS_PATH = "models/ext_feature_defaults.json"
+
+FEATURE_ORDER = [
+    'Air_temperature_K', 'Process_temperature_K', 'Rotational_speed_rpm',
+    'Torque_Nm', 'Tool_wear_min', 'ambient_temp', 'load_density',
+    'humidity', 'shift_encoded', 'temp_load_stress', 'humidity_wear', 'night_load'
+]
+
+@st.cache_resource
+def load_onnx():
+    session = ort.InferenceSession(FINAL_MODEL_PATH)
+    return session
+
+@st.cache_data
+def load_ext_defaults():
+    with open(EXT_DEFAULTS_PATH, 'r') as f:
+        return json.load(f)
+
+onnx_session   = load_onnx()
+onnx_input_name = onnx_session.get_inputs()[0].name
+ext_defaults   = load_ext_defaults()
+
+def get_real_prob(reading: dict) -> float:
+    # 5 raw sensor values + 7 external defaults se 12-feature vector banao
+    features = {
+        'Air_temperature_K'     : reading['Air_temperature_K'],
+        'Process_temperature_K' : reading['Process_temperature_K'],
+        'Rotational_speed_rpm'  : reading['Rotational_speed_rpm'],
+        'Torque_Nm'             : reading['Torque_Nm'],
+        'Tool_wear_min'         : reading['Tool_wear_min'],
+        'ambient_temp'          : ext_defaults['ambient_temp'],
+        'load_density'          : ext_defaults['load_density'],
+        'humidity'              : ext_defaults['humidity'],
+        'shift_encoded'         : ext_defaults['shift_encoded'],
+        'temp_load_stress'      : ext_defaults['temp_load_stress'],
+        'humidity_wear'         : ext_defaults['humidity_wear'],
+        'night_load'            : ext_defaults['night_load'],
+    }
+    X = np.array([[features[col] for col in FEATURE_ORDER]], dtype=np.float32)
+    result = onnx_session.run(None, {onnx_input_name: X})
+    prob = float(result[1][0][1])  # class 1 (failure) probability
+    return prob
 
 # ── Page config ────────────────────────────────────────
 st.set_page_config(
@@ -46,13 +94,13 @@ random_seed = st.sidebar.number_input("Random seed", value=42)
 run_button  = st.sidebar.button("Run Live Simulation", type="primary")
 st.sidebar.divider()
 st.sidebar.caption(f"Dataset: {len(df):,} sensor readings")
-st.sidebar.caption("Model: Simulated probability")
+st.sidebar.caption("Model: LightGBM (ONNX) — Real predictions")
 
 # ── Metric cards (top) ─────────────────────────────────
 col1, col2, col3, col4 = st.columns(4)
 col1.metric("Total Readings", f"{len(df):,}")
 col2.metric("Failure Rate",   "3.39%")
-col3.metric("Features",       "18")
+col3.metric("Features",       "12")
 col4.metric("Tests Passing",  "27/27")
 
 st.divider()
@@ -84,13 +132,8 @@ if run_button:
         sensor_input = {k: v for k, v in reading.items()
                         if k not in ["idx", "actual_failure"]}
 
-        wear_ratio   = reading["Tool_wear_min"] / 250.0
-        torque_ratio = reading["Torque_Nm"] / 80.0
-        temp_ratio   = (reading["Process_temperature_K"] -
-                        reading["Air_temperature_K"]) / 15.0
-        prob = min(0.99, (wear_ratio * 0.5 +
-                          torque_ratio * 0.3 +
-                          temp_ratio * 0.2))
+        # Real ONNX model se probability
+        prob = get_real_prob(reading)
 
         pred_label = 1 if prob >= 0.30 else 0
         alert      = process_alert(
@@ -224,7 +267,8 @@ with tab3:
     noise_data = {
         "Noise Level": [0.01, 0.05, 0.10, 0.20],
         "Mean Macro F1": [0.8637, 0.8593, 0.8572, 0.8485],
-        "Status": ["✅ Above Target", "✅ Above Target", "✅ Above Target", "✅ Above Target"]
+        "Status": ["✅ Above Target", "✅ Above Target", 
+                   "✅ Above Target", "✅ Above Target"]
     }
     st.dataframe(pd.DataFrame(noise_data), width=700, hide_index=True)
 
