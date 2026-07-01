@@ -26,3 +26,5 @@ Thumbs.db
 # Log files
 *.log.ipynb_checkpoints/
 reports/inference.log
+reports/inference.log
+reports/inference.log
