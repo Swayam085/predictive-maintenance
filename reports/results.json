@@ -1,9 +1,7 @@
 {
     "model": "LightGBM Fused",
-    "f1": 0.8753,
-    "macro_f1_cv": 0.8819,
-    "threshold": 0.3988,
-    "precision": 0.7536,
-    "recall": 0.7647,
+    "f1": 0.7368,
+    "precision": 0.7538,
+    "recall": 0.7206,
     "auc": 0.9644
 }
