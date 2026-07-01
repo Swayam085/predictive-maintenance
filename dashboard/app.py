@@ -8,20 +8,26 @@
 #   Day 25 — Real ONNX model connected (Swayam)
 
 import streamlit as st
+
+st.set_page_config(
+    page_title = "Predictive Maintenance",
+    page_icon  = "🔧",
+    layout     = "wide"
+)
+
 import pandas as pd
 import numpy as np
 import time
 import os
 import sys
 import json
+import onnxruntime as ort
+
 
 sys.path.append("src")
 from data_feed import load_sensor_data, get_single_reading, simulate_stream
 from inference import preprocess_input, load_feature_cols
 from alert_system import process_alert, get_alert_summary
-
-# ── ONNX Model Load (ek baar) ──────────────────────────
-import onnxruntime as ort
 
 FINAL_MODEL_PATH = "models/final_model.onnx"
 EXT_DEFAULTS_PATH = "models/ext_feature_defaults.json"
@@ -66,13 +72,6 @@ def get_real_prob(reading: dict) -> float:
     result = onnx_session.run(None, {onnx_input_name: X})
     prob = float(result[1][0][1])  # class 1 (failure) probability
     return prob
-
-# ── Page config ────────────────────────────────────────
-st.set_page_config(
-    page_title = "Predictive Maintenance",
-    page_icon  = "🔧",
-    layout     = "wide"
-)
 
 # ── Title ──────────────────────────────────────────────
 st.title("Predictive Maintenance Dashboard")
